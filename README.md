@@ -1,8 +1,8 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/NathHorrigan/wagtail-bifrost">
-    <img src="https://github.com/othneildrew/Best-README-Template/raw/master/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/torchbox/wagtail-bifrost">
+    <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg" alt="A red g with a bifrost hook" width="80" height="80">
   </a>
 
   <h3 align="center">Wagtail Bifrost</h3>
