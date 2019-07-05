@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/torchbox/wagtail-bifrost">
-    <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg" alt="A red g with a bifrost hook" width="80" height="80">
+    <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg?sanitize=true" alt="A red g with a bifrost hook" width="80" height="80">
   </a>
 
   <h3 align="center">Wagtail Bifrost</h3>
