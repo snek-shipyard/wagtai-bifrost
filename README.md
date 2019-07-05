@@ -1,5 +1,3 @@
-<!-- PROJECT LOGO -->
-<br />
 <p align="center">
   <a href="https://github.com/torchbox/wagtail-bifrost">
     <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg" alt="A red g with a bifrost hook" width="80" height="80">
@@ -14,11 +12,11 @@
     <a href="https://wagtail-bifrost.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/NathHorrigan/wagtail-bifrost#about-the-project">View Demo</a>
+    <a href="https://github.com/torchbox/wagtail-bifrost#about-the-project">View Demo</a>
     ·
-    <a href="https://github.com/NathHorrigan/wagtail-bifrost/issues">Report Bug</a>
+    <a href="https://github.com/torchbox/wagtail-bifrost/issues">Report Bug</a>
     ·
-    <a href="https://github.com/NathHorrigan/wagtail-bifrost/issues">Request Feature</a>
+    <a href="https://github.com/torchbox/wagtail-bifrost/issues">Request Feature</a>
   </p>
 </p>
 
@@ -173,7 +171,7 @@ class BlogPage(Page):
     ]
 ```
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://wagtail-bifrost.readthedocs.io/en/latest/)_
 
 
 
@@ -204,7 +202,7 @@ Nathan Horrigan
 - [@NathHorrigan](https://github.com/NathHorrigan) 
 - NathHorrigan@gmail.com
 
-Project Link: [https://github.com/NathHorrigan/wagtail-bifrost](https://github.com/NathHorrigan/wagtail-bifrost)
+Project Link: [https://github.com/torchbox/wagtail-bifrost](https://github.com/torchbox/wagtail-bifrost)
 
 
 
