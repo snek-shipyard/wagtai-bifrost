@@ -1,132 +1,207 @@
-<img src="https://wagtail.io/static/img/wagtail.dbf60545a188.svg" height="100px">&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://graphql.org/img/logo.svg" height="100px">
-<hr/>
+<p align="center">
+  <a href="https://github.com/torchbox/wagtail-bifrost">
+    <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg?sanitize=true" alt="A red g with a bifrost hook" width="80" height="80">
+  </a>
 
-# wagtail-graphql
-> An app to automatically add GraphQL support to a Wagtail website
+  <h3 align="center">Wagtail Bifrost</h3>
 
-This [Wagtail](https://wagtail.io/) app adds [GraphQL](https://graphql.org/) types to other Wagtail apps. The objective is for this library to interact with an existing website in a generic way and with minimal effort.
-In particular, it makes minimal assumptions about the structure of the website
-to allow for a generic API.
+  <p align="center">
+    A library to build GraphQL endpoints easily so you can bifrost your Wagtail data from anywhere!
+    <br />
+    <br/>
+    <a href="https://wagtail-bifrost.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
+    <br />
+    <br />
+    <a href="https://github.com/torchbox/wagtail-bifrost#about-the-project">View Demo</a>
+    ·
+    <a href="https://github.com/torchbox/wagtail-bifrost/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/torchbox/wagtail-bifrost/issues">Request Feature</a>
+  </p>
+</p>
 
-## Installing / Getting started
 
-To install as a general app:
 
-```shell
-pip install wagtail-graphql
+<!-- TABLE OF CONTENTS -->
+## Table of Contents
+
+* [About the Project](#about-the-project)
+  * [Built With](#built-with)
+* [Getting Started](#getting-started)
+  * [Prerequisites](#prerequisites)
+  * [Installation](#installation)
+* [Usage](#usage)
+* [Contributing](#contributing)
+* [License](#license)
+* [Contact](#contact)
+* [Acknowledgements](#inspired-by)
+
+
+
+<!-- ABOUT THE PROJECT -->
+## About The Project
+
+![GraphQL Preview Demo](docs/demo.gif)
+
+There is a range of GraphQL packages for Python and specifically Django. 
+However, getting these packages to work out of the box with an existing infrastructure 
+without errors isn't as easy to come by.
+
+The purpose of Bifrost is to be able to build GraphQL endpoints on a model by model
+basis as quickly as possible. The setup and configuration have been designed 
+to be as simple but also provide the best features;
+No complex serializers need to be written - just add a `graphql_fields` list 
+to your model and away you go (although if you want to go deeper you can!).
+
+#### Features:
+* Easily create GraphQL types by adding a small annotation in your models.
+* Supports traditional Wagtail models:
+    - Pages (including Streamfield & Orderables)
+    - Snippets
+    - Images
+    - Documents
+    - Settings
+    - Search (on all models)
+* Custom Image & Document model support
+* Advanced headless preview functionality buit using GraphQL Subscriptions to enable Page previews on any device!
+* Gatsby Image support (both base64 and SVG tracing)! :fire:
+
+
+### Built With
+This library is an abstraction upon and relies heavily on Graphene & Graphene Django.
+We also use Django Channels and the Potrace image library.
+* [Graphene](https://github.com/graphql-python/graphene)
+* [Graphene Django](https://github.com/graphql-python/graphene)
+* [Django Channels](https://github.com/django/channels)
+* [Potrace](https://github.com/skyrpex/potrace)
+
+
+## Getting Started
+
+Getting Bifrost installed is designed to be as simple as possible!
+
+### Prerequisites
+```
+Django  >= 2.2, <2.3
+wagtail >= 2.5, <2.7
 ```
 
-Add it together with [graphene_django](https://github.com/graphql-python/graphene-django) to the Django INSTALLED_APPS:
+### Installation
+`pip install wagtail_bifrost`
+
+<br />
+
+Add the following to the `installed_apps` list in your Wagtail settings file:
 
 ```python
-INSTALLED_APPS = [
+installed_apps = [
     ...
-    'wagtail-graphql',
-    'graphene_django',
+    "bifrost",
+    "graphene_django",
+    "channels",
     ...
 ]
-
 ```
 
-### Initial Configuration
+<br />
 
-Add the required [graphene](https://github.com/graphql-python/graphene) schema `GRAPHENE` and a `GRAPHQL_API` dictionary.
-Include all the Wagtail apps the library should generate bindings to in the `APPS` list and optionally specify the prefix for each app in `PREFIX`. To remove a leading part of all the urls for a specific site, specify the `URL_PREFIX` parameter for each needed host.
+Add the following to the bottom of the same settings file, where each key is the app you want to this library to scan and the value is the prefix you want to give to GraphQL types (you can usually leave this blank):
 
 ```python
-GRAPHENE = {
-    'SCHEMA': 'wagtail-graphql.schema.schema',
-}
-
-GRAPHQL_API = {
-    'APPS': [
-        'home'
-    ],
-    'PREFIX': {
-        'home': ''        # optional, prefix for all the app classes generated by the wrapper
-    },
-    'URL_PREFIX': {
-        'localhost': '/home'   # optional, read from the site information if not specified 
-    }
+# Bifrost Config:
+GRAPHENE = {"SCHEMA": "bifrost.schema.schema"}
+BIFROST_APPS = {
+    "home": ""
 }
 ```
-The example above generates bindings for the `home` app, .  Every url in this example
-will be stripped of the initial `/home` substring.
 
-Finally, set up the GraphQL views in the project `urls.py`.
-For example, to add two endpoints for GraphQL and the [GraphiQL](https://github.com/graphql/graphiql) IDE: 
+<br />
+
+Add the GraphQL URLs to your `urls.py`:
 
 ```python
-from django.views.decorators.csrf import csrf_exempt
-from graphene_django.views import GraphQLView
-
+from bifrost import urls as bifrost_urls
+...
 urlpatterns = [
     ...
-    url(r'^api/graphql', csrf_exempt(GraphQLView.as_view())),
-    url(r'^api/graphiql', csrf_exempt(GraphQLView.as_view(graphiql=True, pretty=True)),
+    url(r"", include(bifrost_urls)),
     ...
 ]
 ```
-Note that the urls above need to appear before the `wagtail_urls` catchall entry.
 
-#### Images
+<br/>
+Done! Now you can proceed onto configuring your models to generate GraphQL types that adopt their stucture :tada:
+_Your graphql endpoint is available at http://localhost:8000/graphql/_
+<br/>
 
-To be able to generate urls for images the following also needs to be included in the project's `urls.py`:
+## Usage
 
+Here is a GraphQL model configuration for the default page from the Wagtail docs:
 ```python
-from wagtail.images.views.serve import ServeView
+...
+from bifrost.models import (
+    GraphQLString,
+    GraphQLStreamfield,
+)
 
-urlpatterns = [
-    ...
-    url(r'^images/([^/]*)/(\d*)/([^/]*)/[^/]*$', ServeView.as_view(), name='wagtailimages_serve'),
-    ...
-]
+class BlogPage(Page):
+    author = models.CharField(max_length=255)
+    date = models.DateField("Post date")
+    body = StreamField(
+        [
+            ("heading", blocks.CharBlock(classname="full title")),
+            ("paraagraph", blocks.RichTextBlock()),
+            ("image", ImageChooserBlock()),
+        ]
+    )
+
+    content_panels = Page.content_panels + [
+        FieldPanel("author"),
+        FieldPanel("date"),
+        StreamFieldPanel("body"),
+    ]
+
+    # Note these fields below:
+    graphql_fields = [
+        GraphQLString("heading"),
+        GraphQLString("date"),
+        GraphQLString("author"),
+        GraphQLStreamfield("body"),
+    ]
 ```
 
-
-### Multi-site configuration
-This library works transparently with a multi-site Wagtail install without any extra configuration required.  To strip a custom leading prefix for each site, specify each host in the `URL_PREFIX`.  For exaple, for two hosts `host1.example.com` and `host2.example.com`:
-
-```
-GRAPHQL_API = {
-    ...
-    'URL_PREFIX': {
-        'host1.example.com': '/prefix1',
-        'host2.example.com': '/prefix2'
-    }
-    ...
-}
-```
-Note that the prefix for a site is taken from the root page url if a host is not included in the `URL_PREFIX` dictionary. 
+_For more examples, please refer to the [Documentation](https://wagtail-bifrost.readthedocs.io/en/latest/)_
 
 
-## Developing
-
-To develop this library, download the source code and install a local version in your Wagtail website.
-
-
-## Features
-
-This project is intended to require minimal configuration and interaction. It currently supports 
-
-* [Page models](https://docs.wagtail.io/en/master/topics/pages.html)
-* [Snippets](https://docs.wagtail.io/en/master/topics/snippets.html)
-* Images
-* Documents
-* [StreamFields](https://docs.wagtail.io/en/master/topics/streamfield.html) with [Basic Blocks](https://docs.wagtail.io/en/naster/topics/streamfield.html#basic-block-types) and [StructBlocks](https://docs.wagtail.io/en/master/topics/streamfield.html#structblock) 
- 
 
 ## Contributing
 
-If you'd like to contribute, please fork the repository and use a feature
-branch. Pull requests are welcome.
+Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-## Links
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-- Repository: https://github.com/tr11/wagtail-graphql
-- Issue tracker: https://github.com/tr11/wagtail-graphql/issues
 
-## Licensing
 
-The code in this project is licensed under MIT license.
+## License
 
+Distributed under the MIT License. See `LICENSE` for more information.
+
+
+
+## Contact
+
+Nathan Horrigan 
+- [@NathHorrigan](https://github.com/NathHorrigan) 
+- NathHorrigan@gmail.com
+
+Project Link: [https://github.com/torchbox/wagtail-bifrost](https://github.com/torchbox/wagtail-bifrost)
+
+
+<!-- ACKNOWLEDGEMENTS -->
+## Inspired by
+* [@tr11](https://github.com/tr11)
+* [@tmkn](https://github.com/tmkn)

@@ -1,5 +1,5 @@
-from django.apps import AppConfig      # pragma: no cover
+from django.apps import AppConfig
 
 
-class ApiConfig(AppConfig):     # pragma: no cover
-    name = 'wagtail-graphql'
+class Bifrost(AppConfig):
+    name = "bifrost"

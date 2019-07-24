@@ -1,81 +1,59 @@
-# typings
-from typing import Any  # noqa
-# django
-from django.utils.text import camel_case_to_spaces
-# graphql
-from graphql import ResolveInfo
-# graphene
 import graphene
-# graphene_django
-from graphene_django.converter import String
-# app
-from .relay import RelayMixin
+from graphql.validation.rules import NoUnusedFragments, specified_rules
+
+from .actions import import_apps
+from .types.pages import PagesQuery, PagesSubscription
+from .types.images import ImagesQuery
+from .types.documents import DocumentsQuery
+from .types.snippets import SnippetsQuery
+from .types.settings import SettingsQuery
+from .types.search import SearchQuery
+from .types.streamfield import register_streamfield_blocks
 from .registry import registry
-from .actions import add_apps
-# add all the apps from the settings
-add_apps()
-# mixins
-from .types import (  # noqa: E402
-    AuthQueryMixin, LoginMutation, LogoutMutation,
-    DocumentQueryMixin,
-    ImageQueryMixin,
-    InfoQueryMixin,
-    MenusQueryMixin,
-    PagesQueryMixin,
-    SettingsQueryMixin,
-    SnippetsQueryMixin,
-)
+
+"""
+Import all the django apps defined in django settings then process each model
+in these apps and create graphql node types from them.
+"""
+import_apps()
+register_streamfield_blocks()
+
+"""
+Root schema object that graphene is pointed at.
+It inherits its queries from each of the specific type mixins.
+"""
+
+# HACK: Remove NoUnusedFragments validator
+# Due to the way previews work on the frontend, we need to pass all
+# fragments into the query even if they're not used.
+# This would usually cause a validation error. There doesn't appear
+# to be a nice way to disable this validator so we monkey-patch it instead.
 
 
-# api version
-GRAPHQL_API_FORMAT = (0, 2, 0)
+# We need to update specified_rules in-place so the change appears
+# everywhere it's been imported
 
-# mixins
-AuthQueryMixin_ = AuthQueryMixin()          # type: Any
-DocumentQueryMixin_ = DocumentQueryMixin()  # type: Any
-ImageQueryMixin_ = ImageQueryMixin()        # type: Any
-InfoQueryMixin_ = InfoQueryMixin()          # type: Any
-MenusQueryMixin_ = MenusQueryMixin()        # type: Any
-PagesQueryMixin_ = PagesQueryMixin()        # type: Any
-SettingsQueryMixin_ = SettingsQueryMixin()  # type: Any
-SnippetsQueryMixin_ = SnippetsQueryMixin()  # type: Any
+specified_rules[:] = [
+    rule for rule in specified_rules
+    if rule is not NoUnusedFragments
+]
 
-
-class Query(graphene.ObjectType,
-            AuthQueryMixin_,
-            DocumentQueryMixin_,
-            ImageQueryMixin_,
-            InfoQueryMixin_,
-            MenusQueryMixin_,
-            PagesQueryMixin_,
-            SettingsQueryMixin_,
-            SnippetsQueryMixin_,
-            RelayMixin
-            ):
-    # API Version
-    format = graphene.Field(String)
-
-    def resolve_format(self, _info: ResolveInfo):
-        return '%d.%d.%d' % GRAPHQL_API_FORMAT
+class Query(
+    graphene.ObjectType,
+    PagesQuery(),
+    ImagesQuery(),
+    DocumentsQuery(),
+    SnippetsQuery(),
+    SettingsQuery(),
+    SearchQuery(),
+):
+    pass
 
 
-def mutation_parameters() -> dict:
-    dict_params = {
-        'login': LoginMutation.Field(),
-        'logout': LogoutMutation.Field(),
-    }
-    dict_params.update((camel_case_to_spaces(n).replace(' ', '_'), mut.Field())
-                       for n, mut in registry.forms.items())
-    return dict_params
+class Subscription(PagesSubscription(), graphene.ObjectType):
+    pass
 
-
-Mutations = type("Mutation",
-                 (graphene.ObjectType,),
-                 mutation_parameters()
-                 )
 
 schema = graphene.Schema(
-    query=Query,
-    mutation=Mutations,
-    types=list(registry.models.values())
+    query=Query, types=list(registry.models.values()), subscription=Subscription
 )
