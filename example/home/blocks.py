@@ -4,6 +4,8 @@ from wagtail.images.blocks import ImageChooserBlock
 from bifrost.helpers import register_streamfield_block
 from bifrost.models import GraphQLForeignKey, GraphQLImage, GraphQLString
 
+from wagtail.images.blocks import ImageChooserBlock
+
 
 @register_streamfield_block
 class ImageGalleryImage(blocks.StructBlock):
