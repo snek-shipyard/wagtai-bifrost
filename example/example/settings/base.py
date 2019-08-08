@@ -37,9 +37,9 @@ INSTALLED_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail.core",
-    'wagtail.contrib.settings',
+    "wagtail.contrib.settings",
     "modelcluster",
-    'wagtailmedia',
+    "wagtailmedia",
     "taggit",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -58,7 +58,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    'django.middleware.csrf.CsrfViewMiddleware',
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -160,9 +160,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Bifrost Config:
 GRAPHENE = {"SCHEMA": "bifrost.schema.schema"}
-BIFROST_APPS = {
-        "home": ""
-}
+BIFROST_APPS = {"home": ""}
 BIFROST_ADD_SEARCH_HIT = True
 
 ASGI_APPLICATION = "asgi.channel_layer"
