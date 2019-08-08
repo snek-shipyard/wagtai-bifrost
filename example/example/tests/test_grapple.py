@@ -11,10 +11,12 @@ from wagtail.core.models import Page
 SCHEMA = locate(settings.GRAPHENE["SCHEMA"])
 
 
-class BifrostTest(TestCase):
+class BaseBifrostTest(TestCase):
     def setUp(self):
         self.client = Client(SCHEMA)
 
+
+class PagesTest(BaseBifrostTest):
     def test_pages(self):
         query = """
         {
@@ -28,6 +30,7 @@ class BifrostTest(TestCase):
 
         self.assertEquals(type(executed["data"]), OrderedDict)
         self.assertEquals(type(executed["data"]["pages"]), list)
+        self.assertEquals(type(executed["data"]["pages"][0]), OrderedDict)
 
         pages = Page.objects.all()
 
