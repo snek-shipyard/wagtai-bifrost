@@ -15,13 +15,14 @@ from wagtail.snippets.blocks import SnippetChooserBlock
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.documents.edit_handlers import DocumentChooserPanel
+
+from wagtail_headless_preview.models import HeadlessPreviewMixin
 from wagtailmedia.edit_handlers import MediaChooserPanel
 
 from bifrost.models import (
     GraphQLField,
     GraphQLString,
     GraphQLSnippet,
-    BifrostPageMixin,
     GraphQLStreamfield,
     GraphQLForeignKey,
     GraphQLImage,
@@ -35,7 +36,7 @@ class HomePage(Page):
     pass
 
 
-class BlogPage(BifrostPageMixin, Page):
+class BlogPage(HeadlessPreviewMixin, Page):
     author = models.CharField(max_length=255)
     date = models.DateField("Post date")
     advert = models.ForeignKey(
