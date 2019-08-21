@@ -163,15 +163,10 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Bifrost Config:
 GRAPHENE = {"SCHEMA": "bifrost.schema.schema"}
-BIFROST_APPS = {
-    "images": "",
-    "home": "",
-}
+BIFROST_APPS = {"images": "", "home": ""}
 BIFROST_ADD_SEARCH_HIT = True
 
-HEADLESS_PREVIEW_CLIENT_URLS = {
-    "default": "http://localhost:8001/preview",
-}
+HEADLESS_PREVIEW_CLIENT_URLS = {"default": "http://localhost:8001/preview"}
 HEADLESS_PREVIEW_LIVE = True
 
 ASGI_APPLICATION = "asgi.channel_layer"
