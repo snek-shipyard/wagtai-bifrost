@@ -3,7 +3,7 @@
     <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg?sanitize=true" alt="A red g with a bifrost hook" width="80" height="80">
   </a>
 
-  <h3 align="center">Wagtail Bifrost</h3>
+  <h3 align="center">Wagtail Bifrost [![PyPI](https://img.shields.io/pypi/v/wagtail-bifrost.svg)](https://pypi.org/project/wagtail-bifrost/)</h3>
 
   <p align="center">
     A library to build GraphQL endpoints easily so you can bifrost your Wagtail data from anywhere!
