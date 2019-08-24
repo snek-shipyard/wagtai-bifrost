@@ -20,7 +20,6 @@
 ## Table of contents
 
 - [Quick start](#quick-start)
-- [Status](#status)
 - [Bugs and feature requests](#bugs-and-feature-requests)
 - [Contributing](#contributing)
 - [Community](#community)
