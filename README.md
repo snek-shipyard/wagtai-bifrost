@@ -110,10 +110,6 @@ To set up your database and load initial data, run the following commands:
     ./manage.py migrate
     ./manage.py runserver
 
-## [](#status)Status
-
-![Website](https://img.shields.io/website/https/www.aichner-christian.com?label=website)
-
 ## [](#bug-and-feature-requests)Bugs and feature requests
 
 Have a bug or a feature request? Please first search for existing and closed issues. If your problem or idea is not
