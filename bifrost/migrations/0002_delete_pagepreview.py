@@ -5,12 +5,6 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('bifrost', '0001_initial'),
-    ]
+    dependencies = [("bifrost", "0001_initial")]
 
-    operations = [
-        migrations.DeleteModel(
-            name='PagePreview',
-        ),
-    ]
+    operations = [migrations.DeleteModel(name="PagePreview")]
