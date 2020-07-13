@@ -1,7 +1,6 @@
 from example.tests.test_bifrost import BaseBifrostTest
-from home.factories import (
-    AdvertFactory
-)
+from home.factories import AdvertFactory
+
 
 class AdvertTest(BaseBifrostTest):
     def setUp(self):
@@ -40,7 +39,7 @@ class AdvertTest(BaseBifrostTest):
                 text
             }
         }
-        """% (
+        """ % (
             self.advert.url
         )
         executed = self.client.execute(query)
