@@ -1,39 +1,76 @@
 import os
+import codecs
 import urllib.parse
 import graphene
 
 from django.conf import settings
 from graphene_django import DjangoObjectType
+from wagtail.images import get_image_model
 from wagtail.images.models import (
     Image as WagtailImage,
     Rendition as WagtailImageRendition,
 )
 
 from ..registry import registry
-from ..utils import (
-    convert_image_to_bmp,
-    trace_bitmap,
-    image_as_base64,
-    resolve_queryset,
-)
+from ..utils import resolve_queryset
 from .structures import QuerySetList
 
 
-class ImageRenditionObjectType(DjangoObjectType):
-    id = graphene.ID()
-    url = graphene.String()
-    width = graphene.Int()
-    height = graphene.Int()
+def get_image_url(cls):
+    url = ""
+    if hasattr(cls, "url"):
+        url = cls.url
+    else:
+        url = cls.file.url
+
+    if url[0] == "/":
+        return settings.BASE_URL + url
+    return url
+
+
+class BaseImageObjectType(graphene.ObjectType):
+    width = graphene.Int(required=True)
+    height = graphene.Int(required=True)
+    src = graphene.String(required=True)
+    aspect_ratio = graphene.Float(required=True)
+    sizes = graphene.String(required=True)
+
+    def resolve_src(self, info):
+        """
+        Get url of the original uploaded image.
+        """
+        return get_image_url(self)
+
+    def resolve_aspect_ratio(self, info, **kwargs):
+        """
+        Calculate aspect ratio for the image.
+        """
+        return self.width / self.height
+
+    def resolve_sizes(self, info):
+        return "(max-width: {}px) 100vw, {}px".format(self.width, self.width)
+
+
+class ImageRenditionObjectType(DjangoObjectType, BaseImageObjectType):
+    id = graphene.ID(required=True)
+    url = graphene.String(required=True)
 
     class Meta:
         model = WagtailImageRendition
 
+    def resolve_image(self, info, **kwargs):
+        return self.image
 
-class ImageObjectType(DjangoObjectType):
-    src = graphene.String()
-    src_set = graphene.String(sizes=graphene.List(graphene.Int))
+
+def get_rendition_type():
+    rendition_mdl = get_image_model().renditions.rel.related_model
+    rendition_type = registry.images.get(rendition_mdl, ImageRenditionObjectType)
+    return rendition_type
+
+
+class ImageObjectType(DjangoObjectType, BaseImageObjectType):
     rendition = graphene.Field(
-        ImageRenditionObjectType,
+        lambda: get_rendition_type(),
         max=graphene.String(),
         min=graphene.String(),
         width=graphene.Int(),
@@ -43,10 +80,7 @@ class ImageObjectType(DjangoObjectType):
         bgcolor=graphene.String(),
         jpegquality=graphene.Int(),
     )
-    traced_SVG = graphene.String(name='tracedSVG')
-    base64 = graphene.String()
-    aspect_ratio = graphene.Float()
-    sizes = graphene.String()
+    src_set = graphene.String(sizes=graphene.List(graphene.Int))
 
     class Meta:
         model = WagtailImage
@@ -56,81 +90,63 @@ class ImageObjectType(DjangoObjectType):
         """
         Render a custom rendition of the current image.
         """
-        filters = "|".join([f"{key}-{val}" for key, val in kwargs.items()])
-        img = self.get_rendition(filters)
-        return ImageRenditionObjectType(
-            id=img.id, url=img.url, width=img.width, height=img.height
-        )
+        try:
+            filters = "|".join([f"{key}-{val}" for key, val in kwargs.items()])
+            img = self.get_rendition(filters)
+            rendition_type = get_rendition_type()
 
-    def resolve_src(self, info):
-        """
-        Get url of the original uploaded image.
-        """
-        return settings.BASE_URL + self.file.url
+            return rendition_type(
+                id=img.id,
+                url=img.url,
+                width=img.width,
+                height=img.height,
+                file=img.file,
+                image=self,
+            )
+        except:
+            return None
 
     def resolve_src_set(self, info, sizes, **kwargs):
         """
         Generate src set of renditions.
         """
-        rendition_list = [
-            ImageObjectType.resolve_rendition(self, info, width=width)
-            for width in sizes
-        ]
+        try:
+            if self.file.name is not None:
+                rendition_list = [
+                    ImageObjectType.resolve_rendition(self, info, width=width)
+                    for width in sizes
+                ]
 
-        return ", ".join(
-            [f"{settings.BASE_URL + img.url} {img.width}w" for img in rendition_list]
-        )
+                return ", ".join(
+                    [f"{get_image_url(img)} {img.width}w" for img in rendition_list]
+                )
+        except:
+            pass
 
-    def resolve_base64(self, info):
-        """
-        Intended to be used by Gatsby Image. Return the image as base-encoded string so that it can be pre-rendered
-        as background image while actual image is downloaded via network.
-        """
-        return image_as_base64(self.file.url)
+        return ""
 
-    def resolve_traced_SVG(self, info):
-        """
-        Intended to be used by Gatsby Image. Trace a bitmap image and return a small-sized svg that can be pre-rendered
-        as background image while actual image is downloaded via network.
-        """
-        temp_image = convert_image_to_bmp(settings.BASE_DIR + self.file.url)
-        svg_trace_image = (
-            settings.BASE_DIR + os.path.splitext(self.file.url)[0] + "-traced.svg"
-        )
-        if not os.path.isfile(svg_trace_image):
-            trace_bitmap(temp_image, svg_trace_image)
 
-        with open(svg_trace_image, "r") as svgFile:
-            return "data:image/svg+xml," + urllib.parse.quote(svgFile.read())
-
-    def resolve_aspect_ratio(self, info, **kwargs):
-        """
-        Calculate aspect ratio for Gatsby Image.
-        """
-        return self.width / self.height
-
-    def resolve_sizes(self, info):
-        return "(max-width: {}px) 100vw, {}px".format(self.width, self.width)
+def get_image_type():
+    mdl = get_image_model()
+    return registry.images.get(mdl, ImageObjectType)
 
 
 def ImagesQuery():
-    from wagtail.images import get_image_model
-    registry.images[WagtailImage] = ImageObjectType
     mdl = get_image_model()
-    model_type = registry.images[mdl]
+    mdl_type = get_image_type()
 
     class Mixin:
-        images = QuerySetList(model_type, enable_search=True)
+        images = QuerySetList(
+            graphene.NonNull(mdl_type), enable_search=True, required=True
+        )
+        image_type = graphene.String(required=True)
 
         # Return all pages, ideally specific.
         def resolve_images(self, info, **kwargs):
             return resolve_queryset(mdl.objects.all(), info, **kwargs)
 
+        # Give name of the image type, used to generate mixins
+        def resolve_image_type(self, info, **kwargs):
+            return get_image_type()
+
     return Mixin
-
-
-def get_image_type():
-    from wagtail.images import get_image_model
-    registry.images[WagtailImage] = ImageObjectType
-    mdl = get_image_model()
-    return registry.images[mdl]

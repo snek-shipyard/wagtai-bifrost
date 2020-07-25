@@ -25,6 +25,7 @@ BASE_DIR = os.path.dirname(PROJECT_DIR)
 
 INSTALLED_APPS = [
     "home",
+    "images",
     "search",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -37,9 +38,9 @@ INSTALLED_APPS = [
     "wagtail.search",
     "wagtail.admin",
     "wagtail.core",
-    'wagtail.contrib.settings',
+    "wagtail.contrib.settings",
     "modelcluster",
-    'wagtailmedia',
+    "wagtailmedia",
     "taggit",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "wagtail_headless_preview",
     # BIFROST SPECIFIC MODULES
     "bifrost",
     "graphene_django",
@@ -58,7 +60,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    'django.middleware.csrf.CsrfViewMiddleware',
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -151,6 +153,7 @@ MEDIA_URL = "/media/"
 # Wagtail settings
 
 WAGTAIL_SITE_NAME = "example"
+WAGTAILIMAGES_IMAGE_MODEL = "images.CustomImage"
 
 # Base URL to use when referring to full URLs within the Wagtail admin backend -
 # e.g. in notification emails. Don't include '/admin' or a trailing slash
@@ -160,13 +163,13 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 # Bifrost Config:
 GRAPHENE = {"SCHEMA": "bifrost.schema.schema"}
-BIFROST_APPS = {
-        "home": ""
-}
+BIFROST_APPS = {"images": "", "home": ""}
 BIFROST_ADD_SEARCH_HIT = True
 
+HEADLESS_PREVIEW_CLIENT_URLS = {"default": "http://localhost:8001/preview"}
+HEADLESS_PREVIEW_LIVE = True
+
 ASGI_APPLICATION = "asgi.channel_layer"
-BIFROST_PREVIEW_URL = "http://localhost:8001/preview"
 CHANNELS_WS_PROTOCOLS = ["graphql-ws"]
 CHANNEL_LAYERS = {
     "default": {

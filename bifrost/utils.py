@@ -2,7 +2,6 @@ import os
 import base64
 import tempfile
 from PIL import Image, ImageFilter
-from colorthief import ColorThief
 from django.conf import settings
 from wagtail.search.index import class_is_indexed
 from wagtail.search.models import Query
@@ -34,6 +33,8 @@ def resolve_queryset(
 
     if id is not None:
         qs = qs.filter(pk=id)
+    else:
+        qs = qs.all()
 
     if id is None and search_query:
         # Check if the queryset is searchable using Wagtail search.
@@ -71,40 +72,3 @@ def image_as_base64(image_file, format="png"):
         encoded_string = base64.b64encode(img_f.read())
 
     return "data:image/%s;base64,%s" % (format, encoded_string)
-
-
-def convert_image_to_bmp(src: str, dest: str = None) -> str:
-    try:
-        img = Image.open(src)
-        img = img.filter(ImageFilter.BLUR)
-        if dest is None:
-            dest = tempfile.NamedTemporaryFile(suffix=".bmp").name
-        img.save(dest)
-        return dest
-    except BaseException as e:
-        print(e)
-        print("Image %s does not exist", src)
-
-
-def trace_bitmap(src: str, dest: str) -> str:
-    try:
-        # Get two most common colors and convert to hex.
-        color_thief = ColorThief(src)
-        palette = color_thief.get_palette(color_count=2)
-        foreground = rgb2hex(*palette[0])
-        background = rgb2hex(*palette[1])
-
-        # Trace image to svg and fill the back/foreground with the colors from
-        # above.
-        os.system(
-            "potrace --opaque --color={} --fillcolor={} --svg {} -o {}".format(
-                foreground, background, src, dest
-            )
-        )
-        return dest
-    except BaseException:
-        print("Failed to trace bitmap: ", src)
-
-
-def rgb2hex(r, g, b):
-    return "#{:02x}{:02x}{:02x}".format(r, g, b)

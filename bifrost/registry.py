@@ -14,6 +14,30 @@ class Registry:
     django_models = RegistryItem()
     settings = RegistryItem()
 
+    # The items in the registry that should be lazy loaded.
+    lazy_types = (
+        "pages",
+        "documents",
+        "images",
+        "snippets",
+        "django_models",
+        "settings",
+    )
+
+    # Internal use only, do not add to .models method
+    schema = []
+
+    @property
+    def class_models(self) -> dict:
+        models: dict = {}
+        models.update(self.pages)
+        models.update(self.documents)
+        models.update(self.images)
+        models.update(self.snippets)
+        models.update(self.django_models)
+        models.update(self.settings)
+        return models
+
     @property
     def models(self) -> dict:
         models: dict = {}

@@ -3,7 +3,7 @@
     <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg?sanitize=true" alt="A red g with a bifrost hook" width="80" height="80">
   </a>
 
-  <h3 align="center">Wagtail Bifrost</h3>
+  <h3 align="center">Wagtail Bifrost <a href="https://pypi.org/project/wagtail-bifrost/"><img src="https://img.shields.io/pypi/v/wagtail-bifrost.svg"></a> <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg"></a></h3>
 
   <p align="center">
     A library to build GraphQL endpoints easily so you can bifrost your Wagtail data from anywhere!
@@ -32,6 +32,7 @@
   * [Installation](#installation)
 * [Usage](#usage)
 * [Contributing](#contributing)
+* [Compatibility](#compatibility)
 * [License](#license)
 * [Contact](#contact)
 * [Acknowledgements](#inspired-by)
@@ -43,14 +44,14 @@
 
 ![GraphQL Preview Demo](docs/demo.gif)
 
-There is a range of GraphQL packages for Python and specifically Django. 
-However, getting these packages to work out of the box with an existing infrastructure 
+There is a range of GraphQL packages for Python and specifically Django.
+However, getting these packages to work out of the box with an existing infrastructure
 without errors isn't as easy to come by.
 
 The purpose of Bifrost is to be able to build GraphQL endpoints on a model by model
-basis as quickly as possible. The setup and configuration have been designed 
+basis as quickly as possible. The setup and configuration have been designed
 to be as simple but also provide the best features;
-No complex serializers need to be written - just add a `graphql_fields` list 
+No complex serializers need to be written - just add a `graphql_fields` list
 to your model and away you go (although if you want to go deeper you can!).
 
 #### Features:
@@ -83,7 +84,7 @@ Getting Bifrost installed is designed to be as simple as possible!
 ### Prerequisites
 ```
 Django  >= 2.2, <2.3
-wagtail >= 2.5, <2.7
+wagtail >= 2.5, <2.8
 ```
 
 ### Installation
@@ -184,7 +185,21 @@ Contributions are what make the open source community such an amazing place to b
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+### Local development
 
+ - In the python environment of your choice, navigate to `/examples`
+ - Run `pip install -r requirements.txt`
+ - Delete the `db.sqlite3` file and run `./manage.py migrate`
+ - Run server `./manage.py runserver`
+
+
+## Compatibility
+
+Wagtail Bifrost supports:
+
+- Django 2.2.x
+- Python 3.6 and 3.7
+- Wagtail >= 2.5
 
 ## License
 
@@ -194,8 +209,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-Nathan Horrigan 
-- [@NathHorrigan](https://github.com/NathHorrigan) 
+Nathan Horrigan
+- [@NathHorrigan](https://github.com/NathHorrigan)
 - NathHorrigan@gmail.com
 
 Project Link: [https://github.com/torchbox/wagtail-bifrost](https://github.com/torchbox/wagtail-bifrost)
