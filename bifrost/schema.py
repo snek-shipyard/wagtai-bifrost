@@ -1,6 +1,9 @@
 import graphene
+import graphql_jwt
 from django.conf import settings
 from graphql.validation.rules import NoUnusedFragments, specified_rules
+# django
+from django.utils.text import camel_case_to_spaces
 
 # HACK: Remove NoUnusedFragments validator
 # Due to the way previews work on the frontend, we need to pass all
@@ -29,6 +32,7 @@ def create_schema():
     from .types.snippets import SnippetsQuery
     from .types.redirects import RedirectsQuery
 
+    from .jwtauth.schema import ObtainJSONWebToken
     class Query(
         graphene.ObjectType,
         PagesQuery(),
@@ -45,8 +49,25 @@ def create_schema():
     class Subscription(PagesSubscription(), graphene.ObjectType):
         pass
 
+    def mutation_parameters() -> dict:
+        dict_params = {
+            'token_auth': ObtainJSONWebToken.Field(),
+            'verify_token': graphql_jwt.Verify.Field(),
+            'refresh_token': graphql_jwt.Refresh.Field(),
+            'revoke_token': graphql_jwt.Revoke.Field(),
+        }
+        dict_params.update((camel_case_to_spaces(n).replace(' ', '_'), mut.Field())
+                           for n, mut in registry.forms.items())
+        return dict_params
+
+    Mutations = type("Mutation",
+                     (graphene.ObjectType,),
+                     mutation_parameters()
+                     )
+
     return graphene.Schema(
         query=Query,
+        mutation=Mutations,
         subscription=Subscription,
         types=list(registry.models.values()),
         auto_camelcase=getattr(settings, "BIFROST_AUTO_CAMELCASE", True),

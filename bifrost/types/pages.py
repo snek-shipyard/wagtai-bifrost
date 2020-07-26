@@ -7,6 +7,8 @@ from graphql.error import GraphQLLocatedError
 from graphql.execution.base import ResolveInfo
 from rx.subjects import Subject
 from django.dispatch import receiver
+# graphql_jwt
+from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -27,24 +29,12 @@ class PageInterface(graphene.Interface):
     content_type = graphene.String(required=True)
     last_published_at = graphene.DateTime()
     parent = graphene.Field(lambda: PageInterface)
-    children = QuerySetList(
-        graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
-    )
-    siblings = QuerySetList(
-        graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
-    )
-    next_siblings = QuerySetList(
-        graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
-    )
-    previous_siblings = QuerySetList(
-        graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
-    )
-    descendants = QuerySetList(
-        graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
-    )
-    ancestors = QuerySetList(
-        graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
-    )
+    children = QuerySetList(lambda: PageInterface, enable_search=True)
+    siblings = QuerySetList(lambda: PageInterface, enable_search=True)
+    next_siblings = QuerySetList(lambda: PageInterface, enable_search=True)
+    previous_siblings = QuerySetList(lambda: PageInterface, enable_search=True)
+    descendants = QuerySetList(lambda: PageInterface, enable_search=True)
+    ancestors = QuerySetList(lambda: PageInterface, enable_search=True)
 
     def resolve_content_type(self, info: ResolveInfo):
         self.content_type = ContentType.objects.get_for_model(self)
@@ -174,7 +164,7 @@ def PagesQuery():
 
     class Mixin:
         pages = QuerySetList(
-            graphene.NonNull(lambda: PageInterface), enable_search=True, required=True
+            graphene.NonNull(lambda: PageInterface), token=graphene.String(), enable_search=True, required=True
         )
         page = graphene.Field(
             PageInterface,
@@ -185,12 +175,14 @@ def PagesQuery():
         )
 
         # Return all pages, ideally specific.
+        @login_required
         def resolve_pages(self, info, **kwargs):
             return resolve_queryset(
                 WagtailPage.objects.live().public().specific(), info, **kwargs
             )
 
         # Return a specific page, identified by ID or Slug.
+        @login_required
         def resolve_page(self, info, **kwargs):
             return get_specific_page(
                 id=kwargs.get("id"),
@@ -227,6 +219,7 @@ def PagesSubscription():
             content_type=graphene.String(),
         )
 
+        @login_required
         def resolve_page(self, info, **kwargs):
             return preview_observable(
                 id=kwargs.get("id"),

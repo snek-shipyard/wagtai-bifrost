@@ -1,4 +1,5 @@
 import graphene
+from graphene.types.generic import GenericScalar
 import inspect
 from typing import Type
 from types import MethodType
@@ -9,6 +10,7 @@ from django.db.models.query import QuerySet
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.forms.models import AbstractForm
 from wagtail.core.models import Page as WagtailPage
 from wagtail.core.blocks import BaseBlock, RichTextBlock
 from wagtail.documents.models import AbstractDocument
@@ -17,13 +19,18 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.snippets.models import get_snippet_models
 from graphene_django.types import DjangoObjectType
 
-
 from .registry import registry
 from .types.pages import PageInterface, Page
 from .types.documents import DocumentObjectType
 from .types.streamfield import generate_streamfield_union
 from .types.images import ImageObjectType
 from .helpers import streamfield_types
+# graphql_jwt
+from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from .types.forms import (
+    FormError,
+    FormField,
+)
 
 
 def import_apps():
@@ -84,7 +91,9 @@ def register_model(cls: type, type_prefix: str):
 
     # Pass class to correct type creator.
     if cls is not None:
-        if issubclass(cls, WagtailPage):
+        if issubclass(cls, AbstractForm):
+            register_form_model(cls, type_prefix)
+        elif issubclass(cls, WagtailPage):
             register_page_model(cls, type_prefix)
         elif issubclass(cls, AbstractDocument):
             register_documment_model(cls, type_prefix)
@@ -340,6 +349,81 @@ def build_streamfield_type(
     return graphql_node
 
 
+def register_form_model(cls: Type[AbstractForm], type_prefix: str):
+    """
+    Create graphene node type for models than inherit from Wagtail Page model.
+    """
+
+    # Avoid gql type duplicates
+    if cls in registry.pages:
+        return
+
+    # Create a GQL type derived from page model.
+    page_node_type = build_node_type(cls, type_prefix, PageInterface, Page)
+
+    # Add page type to registry.
+    if page_node_type:
+        registry.pages[cls] = page_node_type
+
+
+    #> FormPage Mutation
+
+    # dict parameters to create GraphQL type
+    class Meta:
+        model = WagtailPage
+        interfaces = (PageInterface,)
+
+    dict_params = {'Meta': Meta}
+    node = cls.__name__
+
+    dict_params['form_fields'] = graphene.List(FormField)
+
+    def form_fields(self, _info):
+        return list(FormField(name=field_.clean_name, field_type=field_.field_type,
+                            label=field_.label, required=field_.required,
+                            help_text=field_.help_text, choices=field_.choices,
+                            default_value=field_.default_value)
+                    for field_ in self.form_fields.all())
+
+    dict_params['resolve_form_fields'] = form_fields
+
+    # Avoid gql type duplicates
+    if cls in registry.forms:
+        return
+
+    args = type("Arguments", (), {"values": GenericScalar(),
+                                  "url": graphene.String(required=True),
+                                  "token": graphene.String(required=True)})
+    _node = node
+
+    @login_required
+    def mutate(_self, info, token, url, values):
+        url_prefix = url_prefix_for_site(info)
+        query = wagtailPage.objects.filter(url_path=url_prefix + url.rstrip('/') + '/')
+        instance = with_page_permissions(
+            info.context,
+            query.specific()
+        ).live().first()
+        user = info.context.user
+        # convert camelcase to dashes
+        values = {camel_case_to_spaces(k).replace(' ', '-'): v for k, v in values.items()}
+        form = instance.get_form(values, None, page=instance, user=user)
+        if form.is_valid():
+            # form_submission
+            instance.process_form_submission(form)
+            return registry.forms[_node](result="OK")
+        else:
+            return registry.forms[_node](result="FAIL", errors=[FormError(*err) for err in form.errors.items()])
+
+    dict_params = {
+        "Arguments": args,
+        "mutate": mutate,
+        "result": graphene.String(),
+        "errors": graphene.List(FormError),
+    }
+    tp = type(node + "Mutation", (graphene.Mutation,), dict_params)  # type: Type[graphene.Mutation]
+    registry.forms[node] = tp
+    return tp
 def register_page_model(cls: Type[WagtailPage], type_prefix: str):
     """
     Create graphene node type for models than inherit from Wagtail Page model.

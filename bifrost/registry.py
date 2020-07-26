@@ -13,6 +13,7 @@ class Registry:
     streamfield_blocks = RegistryItem()
     django_models = RegistryItem()
     settings = RegistryItem()
+    forms = RegistryItem()
 
     # The items in the registry that should be lazy loaded.
     lazy_types = (
@@ -22,6 +23,7 @@ class Registry:
         "snippets",
         "django_models",
         "settings",
+        #"forms"
     )
 
     # Internal use only, do not add to .models method
@@ -36,6 +38,7 @@ class Registry:
         models.update(self.snippets)
         models.update(self.django_models)
         models.update(self.settings)
+        models.update(self.forms)
         return models
 
     @property
@@ -48,6 +51,7 @@ class Registry:
         models.update(self.streamfield_blocks)
         models.update(self.django_models)
         models.update(self.settings)
+        models.update(self.forms)
         return models
 
 

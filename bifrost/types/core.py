@@ -1,25 +1,29 @@
 # typings
 from typing import cast
 # django
-from django.contrib.auth.models import User as wagtailUser
+#from django.contrib.auth.models import User as wagtailUser
 from django.contrib.contenttypes.models import ContentType
 # graphql
 from graphql.execution.base import ResolveInfo
 from graphql.language.ast import InlineFragment
+from graphql import GraphQLError
 # graphene
 import graphene
 # graphene_django
 from graphene_django import DjangoObjectType
 from graphene_django.converter import convert_django_field, String, List
+# graphql_jwt
+from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
 # wagtail
 from wagtail.core.models import Page as wagtailPage, Site as wagtailSite
-from taggit.managers import TaggableManager, 
-from modelcluster.tags import ClusterTaggableManager
+from taggit.managers import TaggableManager
 from wagtail.core.utils import camelcase_to_underscore
 # app
 from ..settings import url_prefix_for_site, RELAY
 from ..registry import registry
 from ..permissions import with_page_permissions
+# esite
+from esite.user.models import User as wagtailUser
 
 
 class User(DjangoObjectType):
@@ -91,22 +95,6 @@ class Page(interface_cls):
         ).live().order_by('path').all()
 
 
-# https://jossingram.wordpress.com/2018/04/19/wagtail-and-graphql/
-class FlatTags(graphene.String):
- 
-    @classmethod
-    def serialize(cls, value):
-        tagsList = []
-        for tag in value.all():
-            tagsList.append(tag.name)
-        return tagsList
- 
-@convert_django_field.register(ClusterTaggableManager)
-def convert_tag_field_to_string(field, registry=None):
-    return graphene.Field(FlatTags,
-        description=field.help_text,
-        required=not field.null)
-    
 @convert_django_field.register(TaggableManager)
 def convert_field_to_string(field, _registry=None):
     return List(String, description=field.help_text, required=not field.null)
@@ -139,24 +127,32 @@ def PagesQueryMixin():  # noqa: C901
         if RELAY:
             pages = graphene.ConnectionField(PageConnection)
         else:
-            pages = graphene.List(Page, parent=graphene.Int())
+            pages = graphene.List(Page, token=graphene.String(required=False), parent=graphene.Int())
 
         page = graphene.Field(Page,
+                              token=graphene.String(required=False),
                               id=graphene.Int(),
                               url=graphene.String(),
                               revision=graphene.Int(),
                               )
         preview = graphene.Field(Page,
+                                 token=graphene.String(required=False),
                                  id=graphene.Int(required=True),
                                  )
 
         preview_add = graphene.Field(Page,
+                                     token=graphene.String(required=False),
                                      app_name=graphene.String(),
                                      model_name=graphene.String(),
                                      parent=graphene.Int(required=True),
                                      )
 
+        @login_required
         def resolve_pages(self, info: ResolveInfo, parent: int = None, **_kwargs):
+            # session authentication
+            #if info.context.user.is_anonymous:
+            #    raise GraphQLError('You must be logged')
+            
             query = wagtailPage.objects
 
             # prefetch specific type pages
@@ -177,8 +173,14 @@ def PagesQueryMixin():  # noqa: C901
                 query.specific()
             ).live().order_by('path').all()
 
-        def resolve_page(self, info: ResolveInfo, id: int = None, url: str = None, revision: int = None):
+        @login_required
+        def resolve_page(self, info: ResolveInfo, id: int = None, url: str = None, revision: int = None, **_kwargs):
+            # session authentication
+            #if info.context.user.is_anonymous:
+            #    raise GraphQLError('You must be logged')
+            
             query = wagtailPage.objects
+            
             if id is not None:
                 query = query.filter(id=id)
             elif url is not None:
@@ -208,14 +210,24 @@ def PagesQueryMixin():  # noqa: C901
 
             return page
 
-        def resolve_preview(self, info: ResolveInfo, id: int):   # pragma: no cover
+        @login_required
+        def resolve_preview(self, info: ResolveInfo, id: int, **_kwargs):   # pragma: no cover
+            # session authentication
+            #if info.context.user.is_anonymous:
+            #    raise GraphQLError('You must be logged')
+            
             from wagtail.admin.views.pages import PreviewOnEdit
             request = info.context
             view = PreviewOnEdit(args=('%d' % id, ), request=request)
             return _resolve_preview(request, view)
 
+        @login_required
         def resolve_preview_add(self, info: ResolveInfo, app_name: str = 'wagtailcore',
-                                model_name: str = 'page', parent: int = None):  # pragma: no cover
+                                model_name: str = 'page', parent: int = None, **_kwargs):  # pragma: no cover
+            # session authentication
+            #if info.context.user.is_anonymous:
+            #    raise GraphQLError('You must be logged')
+            
             from wagtail.admin.views.pages import PreviewOnCreate
             request = info.context
             view = PreviewOnCreate(args=(app_name, model_name, str(parent)), request=request)
@@ -224,9 +236,16 @@ def PagesQueryMixin():  # noqa: C901
             return page
 
         # Show in Menu
-        show_in_menus = graphene.List(Page)
+        show_in_menus = graphene.List(Page,
+                                      token=graphene.String(required=False),
+                                      )
 
-        def resolve_show_in_menus(self, info: ResolveInfo):
+        @login_required
+        def resolve_show_in_menus(self, info: ResolveInfo, **_kwargs):
+            # session authentication
+            #if info.context.user.is_anonymous:
+            #    raise GraphQLError('You must be logged')
+            
             return with_page_permissions(
                 info.context,
                 wagtailPage.objects.filter(show_in_menus=True)
@@ -237,12 +256,21 @@ def PagesQueryMixin():  # noqa: C901
 def InfoQueryMixin():
     class Mixin:
         # Root
-        root = graphene.Field(Site)
+        root = graphene.Field(Site, token=graphene.String(required=False))
 
-        def resolve_root(self, info: ResolveInfo):
-            user = info.context.user
-            if user.is_superuser:
-                return info.context.site
-            else:
-                return None
+        @login_required
+        def resolve_root(self, info: ResolveInfo, **_kwargs):
+            # session authentication
+            #if info.context.user.is_anonymous:
+            #    raise GraphQLError('You must be logged')
+
+            # old session authentication
+            #user = info.context.user
+            #if user.is_superuser:
+            #    return info.context.site
+            #else:
+            #    return None
+
+            return info.context.site
+    
     return Mixin

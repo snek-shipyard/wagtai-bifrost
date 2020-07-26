@@ -1,4 +1,7 @@
 import graphene
+# graphql_jwt
+from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+
 from ..registry import registry
 
 
@@ -16,6 +19,7 @@ def SettingsQuery():
             )
 
             # Return just one setting base on name param.
+            @login_required
             def resolve_setting(self, info, **kwargs):
                 name = kwargs.get("name")
                 for setting in registry.settings:
@@ -25,6 +29,7 @@ def SettingsQuery():
                 return None
 
             # Return all settings.
+            @login_required
             def resolve_settings(self, info, **kwargs):
                 snippet_objects = []
                 for setting in registry.settings:

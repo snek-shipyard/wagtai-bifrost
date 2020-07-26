@@ -1,4 +1,7 @@
 import graphene
+# graphql_jwt
+from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+
 from ..registry import registry
 
 
@@ -13,6 +16,7 @@ def SnippetsQuery():
             snippets = graphene.List(graphene.NonNull(SnippetObjectType), required=True)
             # Return all snippets.
 
+            @login_required
             def resolve_snippets(self, info, **kwargs):
                 snippet_objects = []
                 for snippet in registry.snippets:
