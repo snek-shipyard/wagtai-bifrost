@@ -25,7 +25,7 @@ class QuerySetList(graphene.List):
     """
     List type with arguments used by Django's query sets.
 
-    This list setts the following arguments on itself:
+    This list sets the following arguments on itself:
 
     * ``id``
     * ``limit``
@@ -44,6 +44,9 @@ class QuerySetList(graphene.List):
     """
 
     def __init__(self, of_type, *args, **kwargs):
+        """
+        Initialise a QuerySetList.
+        """
         enable_limit = kwargs.pop("enable_limit", True)
         enable_offset = kwargs.pop("enable_offset", True)
         enable_search = kwargs.pop("enable_search", True)

@@ -3,12 +3,7 @@ from graphene_django.types import DjangoObjectType
 import graphene
 
 # graphql_jwt
-from graphql_jwt.decorators import (
-    login_required,
-    permission_required,
-    staff_member_required,
-    superuser_required,
-)
+from graphql_jwt.decorators import login_required
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -20,8 +15,8 @@ class DocumentObjectType(DjangoObjectType):
     Base document type used if one isn't generated for the current model.
     All other node types extend this.
     """
-
     class Meta:
+        """Can change over time."""
         model = WagtailDocument
         exclude_fields = ("tags",)
 

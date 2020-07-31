@@ -1,12 +1,7 @@
 import graphene
 
 # graphql_jwt
-from graphql_jwt.decorators import (
-    login_required,
-    permission_required,
-    staff_member_required,
-    superuser_required,
-)
+from graphql_jwt.decorators import login_required
 
 from ..registry import registry
 
@@ -16,6 +11,7 @@ def SettingsQuery():
 
         class SettingsObjectType(graphene.Union):
             class Meta:
+                """Can change over time."""
                 types = registry.settings.types
 
         class Mixin:
