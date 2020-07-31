@@ -1,6 +1,3 @@
-import os
-import codecs
-import urllib.parse
 import graphene
 
 from django.conf import settings
@@ -12,12 +9,7 @@ from wagtail.images.models import (
 )
 
 # graphql_jwt
-from graphql_jwt.decorators import (
-    login_required,
-    permission_required,
-    staff_member_required,
-    superuser_required,
-)
+from graphql_jwt.decorators import login_required
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -64,6 +56,7 @@ class ImageRenditionObjectType(DjangoObjectType, BaseImageObjectType):
     url = graphene.String(required=True)
 
     class Meta:
+        """Can change over time."""
         model = WagtailImageRendition
 
     @login_required
@@ -92,6 +85,7 @@ class ImageObjectType(DjangoObjectType, BaseImageObjectType):
     src_set = graphene.String(sizes=graphene.List(graphene.Int))
 
     class Meta:
+        """Can change over time."""
         model = WagtailImage
         exclude_fields = ("tags",)
 

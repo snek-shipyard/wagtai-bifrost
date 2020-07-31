@@ -6,13 +6,11 @@ from types import MethodType
 from collections.abc import Iterable
 
 from django.db import models
-from django.db.models.query import QuerySet
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
+from django.utils.text import camel_case_to_spaces
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.forms.models import AbstractForm
 from wagtail.core.models import Page as WagtailPage
-from wagtail.core.blocks import BaseBlock, RichTextBlock
 from wagtail.documents.models import AbstractDocument
 from wagtail.images.models import AbstractImage, AbstractRendition
 from wagtail.images.blocks import ImageChooserBlock
@@ -27,12 +25,10 @@ from .types.images import ImageObjectType
 from .helpers import streamfield_types
 
 # graphql_jwt
-from graphql_jwt.decorators import (
-    login_required,
-    permission_required,
-    staff_member_required,
-    superuser_required,
-)
+from graphql_jwt.decorators import login_required
+from .settings import url_prefix_for_site
+
+# app types
 from .types.forms import (
     FormError,
     FormField,
@@ -215,6 +211,7 @@ def build_node_type(
     # Create a tempory model and tempory node that will be replaced later on.
     class StubModel(models.Model):
         class Meta:
+            """Can change over time."""
             managed = False
 
     class StubMeta:
@@ -249,6 +246,7 @@ def load_type_fields():
 
                 # Recreate the graphene type with the fields set
                 class Meta:
+                    """Can change over time."""
                     model = cls
                     interfaces = (interface,) if interface is not None else tuple()
 
@@ -320,6 +318,7 @@ def build_streamfield_type(
     """
     # Create a new blank node type
     class Meta:
+        """Can change over time."""
         if hasattr(cls, "graphql_types"):
             types = [
                 registry.streamfield_blocks.get(block) for block in cls.graphql_types
@@ -375,6 +374,7 @@ def register_form_model(cls: Type[AbstractForm], type_prefix: str):
 
     # dict parameters to create GraphQL type
     class Meta:
+        """Can change over time."""
         model = WagtailPage
         interfaces = (PageInterface,)
 
@@ -417,8 +417,11 @@ def register_form_model(cls: Type[AbstractForm], type_prefix: str):
     @login_required
     def mutate(_self, info, token, url, values):
         url_prefix = url_prefix_for_site(info)
-        query = wagtailPage.objects.filter(url_path=url_prefix + url.rstrip("/") + "/")
-        instance = with_page_permissions(info.context, query.specific()).live().first()
+        instance = (
+            WagtailPage.objects.filter(url_path=url_prefix + url.rstrip("/") + "/")
+            .live()
+            .first()
+        )
         user = info.context.user
         # convert camelcase to dashes
         values = {

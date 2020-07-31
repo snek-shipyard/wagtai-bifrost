@@ -9,12 +9,7 @@ from rx.subjects import Subject
 from django.dispatch import receiver
 
 # graphql_jwt
-from graphql_jwt.decorators import (
-    login_required,
-    permission_required,
-    staff_member_required,
-    superuser_required,
-)
+from graphql_jwt.decorators import login_required
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -132,6 +127,7 @@ class Page(DjangoObjectType):
     """
 
     class Meta:
+        """Can change over time."""
         model = WagtailPage
         interfaces = (PageInterface,)
 

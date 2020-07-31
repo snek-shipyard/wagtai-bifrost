@@ -14,22 +14,26 @@ from wagtailmenus.models import FlatMenu, FlatMenuItem, MainMenu, MainMenuItem
 
 class MenuItem(DjangoObjectType):
     class Meta:
+        """Can change over time."""
         model = MainMenuItem
 
 
 class Menu(DjangoObjectType):
     class Meta:
+        """Can change over time."""
         model = MainMenu
         only_fields = ["max_levels", "menu_items"]
 
 
 class SecondaryMenuItem(DjangoObjectType):
     class Meta:
+        """Can change over time."""
         model = FlatMenuItem
 
 
 class SecondaryMenu(DjangoObjectType):
     class Meta:
+        """Can change over time."""
         model = FlatMenu
         only_fields = ["title", "handle", "heading", "max_levels", "menu_items"]
 

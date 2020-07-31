@@ -5,12 +5,7 @@ from wagtail.images import get_image_model
 from wagtail.search.backends import get_search_backend
 
 # graphql_jwt
-from graphql_jwt.decorators import (
-    login_required,
-    permission_required,
-    staff_member_required,
-    superuser_required,
-)
+from graphql_jwt.decorators import login_required
 
 from ..registry import registry
 
@@ -20,6 +15,7 @@ def SearchQuery():
 
         class Search(graphene.Union):
             class Meta:
+                """Can change over time."""
                 types = tuple(registry.class_models.values())
 
         class Mixin:
