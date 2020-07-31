@@ -7,8 +7,14 @@ from graphql.error import GraphQLLocatedError
 from graphql.execution.base import ResolveInfo
 from rx.subjects import Subject
 from django.dispatch import receiver
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import (
+    login_required,
+    permission_required,
+    staff_member_required,
+    superuser_required,
+)
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -164,7 +170,10 @@ def PagesQuery():
 
     class Mixin:
         pages = QuerySetList(
-            graphene.NonNull(lambda: PageInterface), token=graphene.String(), enable_search=True, required=True
+            graphene.NonNull(lambda: PageInterface),
+            token=graphene.String(),
+            enable_search=True,
+            required=True,
         )
         page = graphene.Field(
             PageInterface,

@@ -15,10 +15,11 @@ from bifrost.permissions import with_page_permissions, with_collection_permissio
 
 # Create your registration related graphql schemes here.
 
-#class UserType(DjangoObjectType):
+# class UserType(DjangoObjectType):
 #    class Meta:
 #        model = User
 #        exclude_fields = ['password']
+
 
 class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
 
@@ -28,4 +29,8 @@ class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
     def resolve(cls, root, info, **kwargs):
         user = info.context.user
         profilequery = wagtailPage.objects.filter(slug=f"{user.username}")
-        return cls(profile=with_page_permissions(info.context, profilequery.specific()).live().first())
+        return cls(
+            profile=with_page_permissions(info.context, profilequery.specific())
+            .live()
+            .first()
+        )

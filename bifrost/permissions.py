@@ -1,8 +1,10 @@
 # python
 from typing import Any, Union
+
 # django
 from django.db.models import Q
 from django.contrib.auth.models import AnonymousUser
+
 # wagtail
 from wagtail.core.query import PageQuerySet
 from wagtail.core.models import PageViewRestriction, CollectionViewRestriction
@@ -29,11 +31,20 @@ def with_page_permissions(request: Any, queryset: PageQuerySet) -> PageQuerySet:
         current_user_groups = user.groups.all()
         q = Q()
         for restriction in PageViewRestriction.objects.all():
-            if (restriction.restriction_type == PageViewRestriction.PASSWORD) or \
-                    (restriction.restriction_type == PageViewRestriction.LOGIN and not user.is_authenticated) or \
-                    (restriction.restriction_type == PageViewRestriction.GROUPS and
-                     not any(group in current_user_groups for group in restriction.groups.all())
-                     ):
+            if (
+                (restriction.restriction_type == PageViewRestriction.PASSWORD)
+                or (
+                    restriction.restriction_type == PageViewRestriction.LOGIN
+                    and not user.is_authenticated
+                )
+                or (
+                    restriction.restriction_type == PageViewRestriction.GROUPS
+                    and not any(
+                        group in current_user_groups
+                        for group in restriction.groups.all()
+                    )
+                )
+            ):
                 q = ~queryset.descendant_of_q(restriction.page, inclusive=True)
         queryset = queryset.filter(q).live()
 
@@ -43,7 +54,9 @@ def with_page_permissions(request: Any, queryset: PageQuerySet) -> PageQuerySet:
 CollectionQSType = Union[ImageQuerySet, DocumentQuerySet]
 
 
-def with_collection_permissions(request: Any, queryset: CollectionQSType) -> CollectionQSType:
+def with_collection_permissions(
+    request: Any, queryset: CollectionQSType
+) -> CollectionQSType:
     user = request.user
 
     # Get live pages that are public and check groups and login permissions
@@ -55,11 +68,20 @@ def with_collection_permissions(request: Any, queryset: CollectionQSType) -> Col
         current_user_groups = user.groups.all()
         q = Q()
         for restriction in CollectionViewRestriction.objects.all():
-            if (restriction.restriction_type == CollectionViewRestriction.PASSWORD) or \
-                    (restriction.restriction_type == CollectionViewRestriction.LOGIN and not user.is_authenticated) or \
-                    (restriction.restriction_type == CollectionViewRestriction.GROUPS and
-                     not any(group in current_user_groups for group in restriction.groups.all())
-                     ):
+            if (
+                (restriction.restriction_type == CollectionViewRestriction.PASSWORD)
+                or (
+                    restriction.restriction_type == CollectionViewRestriction.LOGIN
+                    and not user.is_authenticated
+                )
+                or (
+                    restriction.restriction_type == CollectionViewRestriction.GROUPS
+                    and not any(
+                        group in current_user_groups
+                        for group in restriction.groups.all()
+                    )
+                )
+            ):
                 q &= ~Q(collection=restriction.collection)
                 # q &= ~queryset.filter(collection) descendant_of_q(restriction.page, inclusive=True)
         queryset = queryset.filter(q)

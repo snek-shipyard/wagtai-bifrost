@@ -1,5 +1,6 @@
 # django
 from django.db import models
+
 # graphene_django
 from graphene import String
 from graphene_django.converter import convert_django_field
