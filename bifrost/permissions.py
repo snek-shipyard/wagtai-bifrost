@@ -83,7 +83,6 @@ def with_collection_permissions(
                 )
             ):
                 q &= ~Q(collection=restriction.collection)
-                # q &= ~queryset.filter(collection) descendant_of_q(restriction.page, inclusive=True)
         queryset = queryset.filter(q)
 
     return queryset
