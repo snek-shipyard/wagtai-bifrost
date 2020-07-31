@@ -7,7 +7,7 @@ wagtailfontawesome==1.1.4
 django-cors-headers==3.4.0
 django-filter==2.2.0
 wagtail-generic-chooser==0.1.1
-wagtailmedia=0.5.0
+wagtailmedia==0.5.0
 factory-boy==2.12.0
 wagtail-factories==2.0.0
 wagtail-headless-preview==0.1.4
