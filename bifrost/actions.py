@@ -25,8 +25,14 @@ from .types.documents import DocumentObjectType
 from .types.streamfield import generate_streamfield_union
 from .types.images import ImageObjectType
 from .helpers import streamfield_types
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import (
+    login_required,
+    permission_required,
+    staff_member_required,
+    superuser_required,
+)
 from .types.forms import (
     FormError,
     FormField,
@@ -365,55 +371,68 @@ def register_form_model(cls: Type[AbstractForm], type_prefix: str):
     if page_node_type:
         registry.pages[cls] = page_node_type
 
-
-    #> FormPage Mutation
+    # > FormPage Mutation
 
     # dict parameters to create GraphQL type
     class Meta:
         model = WagtailPage
         interfaces = (PageInterface,)
 
-    dict_params = {'Meta': Meta}
+    dict_params = {"Meta": Meta}
     node = cls.__name__
 
-    dict_params['form_fields'] = graphene.List(FormField)
+    dict_params["form_fields"] = graphene.List(FormField)
 
     def form_fields(self, _info):
-        return list(FormField(name=field_.clean_name, field_type=field_.field_type,
-                            label=field_.label, required=field_.required,
-                            help_text=field_.help_text, choices=field_.choices,
-                            default_value=field_.default_value)
-                    for field_ in self.form_fields.all())
+        return list(
+            FormField(
+                name=field_.clean_name,
+                field_type=field_.field_type,
+                label=field_.label,
+                required=field_.required,
+                help_text=field_.help_text,
+                choices=field_.choices,
+                default_value=field_.default_value,
+            )
+            for field_ in self.form_fields.all()
+        )
 
-    dict_params['resolve_form_fields'] = form_fields
+    dict_params["resolve_form_fields"] = form_fields
 
     # Avoid gql type duplicates
     if cls in registry.forms:
         return
 
-    args = type("Arguments", (), {"values": GenericScalar(),
-                                  "url": graphene.String(required=True),
-                                  "token": graphene.String(required=True)})
+    args = type(
+        "Arguments",
+        (),
+        {
+            "values": GenericScalar(),
+            "url": graphene.String(required=True),
+            "token": graphene.String(required=True),
+        },
+    )
     _node = node
 
     @login_required
     def mutate(_self, info, token, url, values):
         url_prefix = url_prefix_for_site(info)
-        query = wagtailPage.objects.filter(url_path=url_prefix + url.rstrip('/') + '/')
-        instance = with_page_permissions(
-            info.context,
-            query.specific()
-        ).live().first()
+        query = wagtailPage.objects.filter(url_path=url_prefix + url.rstrip("/") + "/")
+        instance = with_page_permissions(info.context, query.specific()).live().first()
         user = info.context.user
         # convert camelcase to dashes
-        values = {camel_case_to_spaces(k).replace(' ', '-'): v for k, v in values.items()}
+        values = {
+            camel_case_to_spaces(k).replace(" ", "-"): v for k, v in values.items()
+        }
         form = instance.get_form(values, None, page=instance, user=user)
         if form.is_valid():
             # form_submission
             instance.process_form_submission(form)
             return registry.forms[_node](result="OK")
         else:
-            return registry.forms[_node](result="FAIL", errors=[FormError(*err) for err in form.errors.items()])
+            return registry.forms[_node](
+                result="FAIL", errors=[FormError(*err) for err in form.errors.items()]
+            )
 
     dict_params = {
         "Arguments": args,
@@ -421,9 +440,13 @@ def register_form_model(cls: Type[AbstractForm], type_prefix: str):
         "result": graphene.String(),
         "errors": graphene.List(FormError),
     }
-    tp = type(node + "Mutation", (graphene.Mutation,), dict_params)  # type: Type[graphene.Mutation]
+    tp = type(
+        node + "Mutation", (graphene.Mutation,), dict_params
+    )  # type: Type[graphene.Mutation]
     registry.forms[node] = tp
     return tp
+
+
 def register_page_model(cls: Type[WagtailPage], type_prefix: str):
     """
     Create graphene node type for models than inherit from Wagtail Page model.

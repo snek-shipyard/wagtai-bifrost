@@ -10,8 +10,14 @@ from wagtail.images.models import (
     Image as WagtailImage,
     Rendition as WagtailImageRendition,
 )
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import (
+    login_required,
+    permission_required,
+    staff_member_required,
+    superuser_required,
+)
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -140,7 +146,10 @@ def ImagesQuery():
 
     class Mixin:
         images = QuerySetList(
-            graphene.NonNull(mdl_type), token=graphene.String(), enable_search=True, required=True
+            graphene.NonNull(mdl_type),
+            token=graphene.String(),
+            enable_search=True,
+            required=True,
         )
         image_type = graphene.String(required=True)
 

@@ -3,8 +3,14 @@ from django.apps import apps
 from wagtail.documents import get_document_model
 from wagtail.images import get_image_model
 from wagtail.search.backends import get_search_backend
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import (
+    login_required,
+    permission_required,
+    staff_member_required,
+    superuser_required,
+)
 
 from ..registry import registry
 

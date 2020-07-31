@@ -1,8 +1,14 @@
 from wagtail.documents.models import Document as WagtailDocument, get_document_model
 from graphene_django.types import DjangoObjectType
 import graphene
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import (
+    login_required,
+    permission_required,
+    staff_member_required,
+    superuser_required,
+)
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -34,7 +40,10 @@ def DocumentsQuery():
 
     class Mixin:
         documents = QuerySetList(
-            graphene.NonNull(model_type), token=graphene.String(), enable_search=True, required=True
+            graphene.NonNull(model_type),
+            token=graphene.String(),
+            enable_search=True,
+            required=True,
         )
 
         # Return all pages, ideally specific.

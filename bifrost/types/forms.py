@@ -1,5 +1,6 @@
 # graphene
 import graphene
+
 # graphene_django
 from graphene_django.converter import String, Boolean
 

@@ -2,6 +2,7 @@ import graphene
 import graphql_jwt
 from django.conf import settings
 from graphql.validation.rules import NoUnusedFragments, specified_rules
+
 # django
 from django.utils.text import camel_case_to_spaces
 
@@ -33,6 +34,7 @@ def create_schema():
     from .types.redirects import RedirectsQuery
 
     from .jwtauth.schema import ObtainJSONWebToken
+
     class Query(
         graphene.ObjectType,
         PagesQuery(),
@@ -51,19 +53,18 @@ def create_schema():
 
     def mutation_parameters() -> dict:
         dict_params = {
-            'token_auth': ObtainJSONWebToken.Field(),
-            'verify_token': graphql_jwt.Verify.Field(),
-            'refresh_token': graphql_jwt.Refresh.Field(),
-            'revoke_token': graphql_jwt.Revoke.Field(),
+            "token_auth": ObtainJSONWebToken.Field(),
+            "verify_token": graphql_jwt.Verify.Field(),
+            "refresh_token": graphql_jwt.Refresh.Field(),
+            "revoke_token": graphql_jwt.Revoke.Field(),
         }
-        dict_params.update((camel_case_to_spaces(n).replace(' ', '_'), mut.Field())
-                           for n, mut in registry.forms.items())
+        dict_params.update(
+            (camel_case_to_spaces(n).replace(" ", "_"), mut.Field())
+            for n, mut in registry.forms.items()
+        )
         return dict_params
 
-    Mutations = type("Mutation",
-                     (graphene.ObjectType,),
-                     mutation_parameters()
-                     )
+    Mutations = type("Mutation", (graphene.ObjectType,), mutation_parameters())
 
     return graphene.Schema(
         query=Query,

@@ -2,8 +2,15 @@ import graphene
 from graphene_django import DjangoObjectType
 from wagtailmedia.models import Media
 from django.conf import settings
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import (
+    login_required,
+    permission_required,
+    staff_member_required,
+    superuser_required,
+)
+
 
 class MediaObjectType(DjangoObjectType):
     class Meta:
