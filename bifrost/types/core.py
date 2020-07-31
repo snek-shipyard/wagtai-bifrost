@@ -175,10 +175,6 @@ def PagesQueryMixin():  # noqa: C901
 
         @login_required
         def resolve_pages(self, info: ResolveInfo, parent: int = None, **_kwargs):
-            # session authentication
-            # if info.context.user.is_anonymous:
-            #    raise GraphQLError('You must be logged')
-
             query = wagtailPage.objects
 
             # prefetch specific type pages
@@ -212,10 +208,6 @@ def PagesQueryMixin():  # noqa: C901
             revision: int = None,
             **_kwargs,
         ):
-            # session authentication
-            # if info.context.user.is_anonymous:
-            #    raise GraphQLError('You must be logged')
-
             query = wagtailPage.objects
 
             if id is not None:
@@ -248,9 +240,6 @@ def PagesQueryMixin():  # noqa: C901
         def resolve_preview(
             self, info: ResolveInfo, id: int, **_kwargs
         ):  # pragma: no cover
-            # session authentication
-            # if info.context.user.is_anonymous:
-            #    raise GraphQLError('You must be logged')
 
             from wagtail.admin.views.pages import PreviewOnEdit
 
@@ -267,9 +256,6 @@ def PagesQueryMixin():  # noqa: C901
             parent: int = None,
             **_kwargs,
         ):  # pragma: no cover
-            # session authentication
-            # if info.context.user.is_anonymous:
-            #    raise GraphQLError('You must be logged')
 
             from wagtail.admin.views.pages import PreviewOnCreate
 
@@ -286,9 +272,6 @@ def PagesQueryMixin():  # noqa: C901
 
         @login_required
         def resolve_show_in_menus(self, info: ResolveInfo, **_kwargs):
-            # session authentication
-            # if info.context.user.is_anonymous:
-            #    raise GraphQLError('You must be logged')
 
             return (
                 with_page_permissions(
@@ -308,17 +291,6 @@ def InfoQueryMixin():
 
         @login_required
         def resolve_root(self, info: ResolveInfo, **_kwargs):
-            # session authentication
-            # if info.context.user.is_anonymous:
-            #    raise GraphQLError('You must be logged')
-
-            # old session authentication
-            # user = info.context.user
-            # if user.is_superuser:
-            #    return info.context.site
-            # else:
-            #    return None
-
             return info.context.site
 
     return Mixin

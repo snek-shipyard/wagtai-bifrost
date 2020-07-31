@@ -23,7 +23,6 @@ class Registry:
         "snippets",
         "django_models",
         "settings",
-        # "forms"
     )
 
     # Internal use only, do not add to .models method
