@@ -148,21 +148,21 @@ those rules whenever possible.
 ## [](#creators)Creators
 
 <table border="0">
-	<tr>
-		<td>
-		<a href="https://github.com/schettn">
-			<img src="https://avatars.githubusercontent.com/schettn?s=100" alt="Avatar schettn">
-		</a>
-		</td>
-    <td>
-      <a href="https://github.com/kleberbaum">
-        <img src="https://avatars.githubusercontent.com/kleberbaum?s=100" alt="Avatar kleberbaum">
-      </a>
-    </td>
+    <tr>
+        <td>
+    	    <a href="https://github.com/kleberbaum">
+    	        <img src="https://avatars.githubusercontent.com/kleberbaum?s=100" alt="Avatar kleberbaum">
+            </a>
+        </td>
+    	<td>
+    	    <a href="https://github.com/schettn">
+                <img src="https://avatars.githubusercontent.com/schettn?s=100" alt="Avatar schettn">
+            </a>
+    	</td>
     </tr>
     <tr>
-    	<td><a href="https://github.com/schettn">Nico Schett</a></td>
-    	<td><a href="https://github.com/kleberbaum">Florian Kleber</a></td>
+        <td><a href="https://github.com/kleberbaum">Florian Kleber</a></td>
+        <td><a href="https://github.com/schettn">Nico Schett</a></td>
     </tr>
 </table>
 
