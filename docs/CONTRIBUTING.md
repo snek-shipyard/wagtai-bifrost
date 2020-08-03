@@ -35,7 +35,6 @@
 
 -   Each pull request should only follow one topic
 -   You must follow the guidelines / template
--   Each pull request must answer one more more issues
 -   Each pull request must have at least one reviewer
 -   Each pull request must have at least one assigned developers
 -   Each pull request must have a label
