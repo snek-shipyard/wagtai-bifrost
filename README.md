@@ -24,21 +24,21 @@
 
 ## Table of contents
 
-- [Table of contents](#table-of-contents)
-- [Quick start](#quick-start)
-- [Setup with Docker](#setup-with-docker)
-    - [Dependencies](#dependencies)
-  - [Installation](#installation)
-  - [Debugging](#debugging)
-- [Setup with Python Virtual Environment](#setup-with-python-virtual-environment)
-    - [Dependencies](#dependencies-1)
-  - [Installation](#installation-1)
-- [Bugs and feature requests](#bugs-and-feature-requests)
-- [Contributing](#contributing)
-- [Versioning](#versioning)
-- [Creators](#creators)
-- [Thanks](#thanks)
-- [Copyright and license](#copyright-and-license)
+-   [Table of contents](#table-of-contents)
+-   [Quick start](#quick-start)
+-   [Setup with Docker](#setup-with-docker)
+    -   [Dependencies](#dependencies)
+    -   [Installation](#installation)
+    -   [Debugging](#debugging)
+-   [Setup with Python Virtual Environment](#setup-with-python-virtual-environment)
+    -   [Dependencies](#dependencies-1)
+    -   [Installation](#installation-1)
+-   [Bugs and feature requests](#bugs-and-feature-requests)
+-   [Contributing](#contributing)
+-   [Versioning](#versioning)
+-   [Creators](#creators)
+-   [Thanks](#thanks)
+-   [Copyright and license](#copyright-and-license)
 
 ## [](#quick-start)Quick start
 
@@ -49,7 +49,7 @@ Several quick start options are available:
 
 ## [](#setup-with-docker)Setup with Docker
 
-#### Dependencies
+### Dependencies
 
 -   [Docker](https://docs.docker.com/engine/installation/)
 -   [Docker Compose](https://docs.docker.com/compose/install/)
@@ -82,7 +82,7 @@ docker-compose logs -f
 You can start a Wagtail project from this template without setting up Docker and simply use a virtual environment,
 which is the [recommended installation approach](https://docs.python.org/3/library/venv.html) for all Python projects itself.
 
-#### Dependencies
+### Dependencies
 
 -   Python 3.5, 3.6 or 3.7
 
@@ -90,10 +90,12 @@ which is the [recommended installation approach](https://docs.python.org/3/libra
 
 With [PIP](https://github.com/pypa/pip) installed, run:
 
+    ```bash
     git clone https://github.com/snek-at/wagtail-template.git
     cd Wagtail-Template
     python --version
     python -m pip --version
+    ```
 
 Confirm that this is showing a compatible version of Python 3.x. If not, and you have multiple versions
 of Python installed on your system, you may need to specify the appropriate version when creating the venv:
@@ -106,20 +108,24 @@ directory containing the virtual environment):
 
 | Platform | Shell      | Command to activate virtual environment |
 | :------- | :--------- | :-------------------------------------- |
-| Posix    | bash/zsh   | \\\\$ source <venv>/bin/activate        |
-|          | fish       | \\\\$ . <venv>/bin/activate.fish        |
-|          | csh/tcsh   | \\\\$ source <venv>/bin/activate.csh    |
+| Posix    | bash/zsh   | \\\\\\$ source <venv>/bin/activate      |
+|          | fish       | \\\\\\$ . <venv>/bin/activate.fish      |
+|          | csh/tcsh   | \\\\\\$ source <venv>/bin/activate.csh  |
 | Windows  | cmd.exe    | C:> <venv>\\Scripts\\activate.bat       |
 |          | PowerShell | PS C:> <venv>\\Scripts\\Activate.ps1    |
 
 Now we're ready to set up the project itself:
 
+    ```bash
     pip install -r requirements/base.txt
+    ```
 
 To set up your database and load initial data, run the following commands:
 
+    ```bash
     ./manage.py migrate
     ./manage.py runserver
+    ```
 
 ## [](#bug-and-feature-requests)Bugs and feature requests
 
