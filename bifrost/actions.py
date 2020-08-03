@@ -27,6 +27,7 @@ from .helpers import streamfield_types
 # graphql_jwt
 from graphql_jwt.decorators import login_required
 from .settings import url_prefix_for_site
+from .permissions import with_page_permissions
 
 # app types
 from .types.forms import (
@@ -417,11 +418,8 @@ def register_form_model(cls: Type[AbstractForm], type_prefix: str):
     @login_required
     def mutate(_self, info, token, url, values):
         url_prefix = url_prefix_for_site(info)
-        instance = (
-            WagtailPage.objects.filter(url_path=url_prefix + url.rstrip("/") + "/")
-            .live()
-            .first()
-        )
+        query = WagtailPage.objects.filter(url_path=url_prefix + url.rstrip("/") + "/")
+        instance = with_page_permissions(info.context, query.specific()).live().first()
         user = info.context.user
         # convert camelcase to dashes
         values = {
