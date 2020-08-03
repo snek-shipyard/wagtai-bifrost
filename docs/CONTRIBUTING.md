@@ -39,7 +39,7 @@
 -   Each pull request must have at least one reviewer
 -   Each pull request must have at least one assigned developers
 -   Each pull request must have a label
--   Each pull request should be merged by a reviewer
+-   Each pull request should be merged by the maintainer
 
 SPDX-License-Identifier: (EUPL-1.2)
 Copyright © 2019-2020 Florian Herbert Klebr IT
