@@ -1,6 +1,7 @@
 import graphene
+
 # graphql_jwt
-from graphql_jwt.decorators import login_required, permission_required, staff_member_required, superuser_required
+from graphql_jwt.decorators import login_required
 
 from ..registry import registry
 
@@ -10,6 +11,7 @@ def SnippetsQuery():
 
         class SnippetObjectType(graphene.Union):
             class Meta:
+                """Can change over time."""
                 types = registry.snippets.types
 
         class Mixin:

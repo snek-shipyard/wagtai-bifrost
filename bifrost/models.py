@@ -1,6 +1,5 @@
 import graphene
 from django.apps import apps
-from django.contrib.contenttypes.models import ContentType
 
 from .registry import registry
 
@@ -14,6 +13,10 @@ class GraphQLField:
     def __init__(
         self, field_name: str, field_type: type = None, required=None, **kwargs
     ):
+        """
+        Initialise GraphQLField from Django field.
+        """
+
         # Initiate and get specific field info.
         self.field_name = field_name
         self.field_type = field_type
@@ -107,7 +110,7 @@ def GraphQLStreamfield(field_name: str, **kwargs):
 
 def GraphQLImage(field_name: str, **kwargs):
     def Mixin():
-        from .types.images import get_image_type, ImageObjectType
+        from .types.images import get_image_type
 
         return GraphQLField(field_name, get_image_type, **kwargs)
 
@@ -116,7 +119,7 @@ def GraphQLImage(field_name: str, **kwargs):
 
 def GraphQLDocument(field_name: str, **kwargs):
     def Mixin():
-        from .types.documents import get_document_type, DocumentObjectType
+        from .types.documents import get_document_type
 
         return GraphQLField(field_name, get_document_type, **kwargs)
 
