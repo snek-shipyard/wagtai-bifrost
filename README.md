@@ -90,12 +90,10 @@ which is the [recommended installation approach](https://docs.python.org/3/libra
 
 With [PIP](https://github.com/pypa/pip) installed, run:
 
-    ```bash
     git clone https://github.com/snek-at/wagtail-template.git
     cd Wagtail-Template
     python --version
     python -m pip --version
-    ```
 
 Confirm that this is showing a compatible version of Python 3.x. If not, and you have multiple versions
 of Python installed on your system, you may need to specify the appropriate version when creating the venv:
@@ -108,25 +106,21 @@ directory containing the virtual environment):
 
 | Platform | Shell      | Command to activate virtual environment |
 | :------- | :--------- | :-------------------------------------- |
-| Posix    | bash/zsh   | \\\\\\$ source <venv>/bin/activate      |
-|          | fish       | \\\\\\$ . <venv>/bin/activate.fish      |
-|          | csh/tcsh   | \\\\\\$ source <venv>/bin/activate.csh  |
+| Posix    | bash/zsh   | \$ source <venv>/bin/activate      |
+|          | fish       | \$ . <venv>/bin/activate.fish      |
+|          | csh/tcsh   | \$ source <venv>/bin/activate.csh  |
 | Windows  | cmd.exe    | C:> <venv>\\Scripts\\activate.bat       |
 |          | PowerShell | PS C:> <venv>\\Scripts\\Activate.ps1    |
 
 Now we're ready to set up the project itself:
 
-    ```bash
     pip install -r requirements/base.txt
-    ```
 
 To set up your database and load initial data, run the following commands:
 
-    ```bash
     ./manage.py migrate
     ./manage.py runserver
-    ```
-
+    
 ## [](#bug-and-feature-requests)Bugs and feature requests
 
 Have a bug or a feature request? Please first search for existing and closed issues. If your problem or idea is not
