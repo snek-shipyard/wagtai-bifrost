@@ -8,8 +8,8 @@
 
 ## Table of contents
 
-- [Table of contents](#table-of-contents)
-- [Conflicts](#conflicts)
+-   [Table of contents](#table-of-contents)
+-   [Conflicts](#conflicts)
 
 ## [](#conflicts)Conflicts
 
