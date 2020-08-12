@@ -1,9 +1,9 @@
 <p align="center">
-  <a href="https://github.com/torchbox/wagtail-bifrost">
-    <img src="https://github.com/torchbox/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg?sanitize=true" alt="A red g with a bifrost hook" width="80" height="80">
+  <a href="https://github.com/snek-shipyard/wagtail-bifrost">
+    <img src="https://github.com/snek-shipyard/wagtail-bifrost/raw/master/.github/wagtail-bifrost.svg?sanitize=true" alt="A red g with a bifrost hook" width="80" height="80">
   </a>
 
-  <h3 align="center">Wagtail Bifrost <a href="https://pypi.org/project/wagtail-bifrost/"><img src="https://img.shields.io/pypi/v/wagtail-bifrost.svg"></a> <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg"></a></h3>
+  <h3 align="center">Wagtail Bifrost <a href="https://pypi.org/project/wagtail-bifrost/"><img src="https://img.shields.io/pypi/v/wagtail-bifrost.svg"></a> <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg"></a> <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white"></a></h3>
 
   <p align="center">
     A library to build GraphQL endpoints easily so you can bifrost your Wagtail data from anywhere!
@@ -12,11 +12,11 @@
     <a href="https://wagtail-bifrost.readthedocs.io/en/latest/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/torchbox/wagtail-bifrost#about-the-project">View Demo</a>
+    <a href="https://github.com/snek-shipyard/wagtail-bifrost#about-the-project">View Demo</a>
     ·
-    <a href="https://github.com/torchbox/wagtail-bifrost/issues">Report Bug</a>
+    <a href="https://github.com/snek-shipyard/wagtail-bifrost/issues">Report Bug</a>
     ·
-    <a href="https://github.com/torchbox/wagtail-bifrost/issues">Request Feature</a>
+    <a href="https://github.com/snek-shipyard/wagtail-bifrost/issues">Request Feature</a>
   </p>
 </p>
 
@@ -64,7 +64,7 @@ to your model and away you go (although if you want to go deeper you can!).
     - Settings
     - Search (on all models)
 * Custom Image & Document model support
-* Advanced headless preview functionality buit using GraphQL Subscriptions to enable Page previews on any device!
+* Advanced headless preview functionality built using GraphQL Subscriptions to enable Page previews on any device!
 * Gatsby Image support (both base64 and SVG tracing)! :fire:
 
 
@@ -131,8 +131,8 @@ urlpatterns = [
 ```
 
 <br/>
-Done! Now you can proceed onto configuring your models to generate GraphQL types that adopt their stucture :tada:
-_Your graphql endpoint is available at http://localhost:8000/graphql/_
+Done! Now you can proceed onto configuring your models to generate GraphQL types that adopt their structure :tada:
+_Your GraphQL endpoint is available at http://localhost:8000/graphql/_
 <br/>
 
 ## Usage
@@ -151,7 +151,7 @@ class BlogPage(Page):
     body = StreamField(
         [
             ("heading", blocks.CharBlock(classname="full title")),
-            ("paraagraph", blocks.RichTextBlock()),
+            ("paragraph", blocks.RichTextBlock()),
             ("image", ImageChooserBlock()),
         ]
     )
@@ -211,9 +211,9 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Nathan Horrigan
 - [@NathHorrigan](https://github.com/NathHorrigan)
-- NathHorrigan@gmail.com
+- nathan.horrigan@torchbox.com
 
-Project Link: [https://github.com/torchbox/wagtail-bifrost](https://github.com/torchbox/wagtail-bifrost)
+Project Link: [https://github.com/snek-shipyard/wagtail-bifrost](https://github.com/snek-shipyard/wagtail-bifrost)
 
 
 <!-- ACKNOWLEDGEMENTS -->
