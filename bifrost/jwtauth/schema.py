@@ -3,6 +3,8 @@ from wagtail.core.models import Page as wagtailPage
 from graphene.types.generic import GenericScalar
 import graphene
 import graphql_jwt
+from graphql import GraphQLError
+
 from ..types.pages import Page
 from ..registry import registry
 
@@ -18,9 +20,12 @@ class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
     profile = graphene.Field(Page)
 
     @classmethod
-    @user_passes_test(lambda u: not u.is_superuser)
     def resolve(cls, root, info, **kwargs):
         user = info.context.user
+
+        if user.is_superuser:
+            raise GraphQLError("Something went wrong")
+
         profilequery = wagtailPage.objects.filter(slug=f"{user.username}")
 
         return cls(
