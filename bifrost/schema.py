@@ -33,7 +33,7 @@ def create_schema():
     from .types.snippets import SnippetsQuery
     from .types.redirects import RedirectsQuery
 
-    from .jwtauth.schema import ObtainJSONWebToken
+    from .jwtauth.schema import ObtainJSONWebToken, ObtainPrivilegedJSONWebToken
 
     class Query(
         graphene.ObjectType,
@@ -54,6 +54,7 @@ def create_schema():
     def mutation_parameters() -> dict:
         dict_params = {
             "token_auth": ObtainJSONWebToken.Field(),
+            "privileged_token_auth": ObtainPrivilegedJSONWebToken.Field(),
             "verify_token": graphql_jwt.Verify.Field(),
             "refresh_token": graphql_jwt.Refresh.Field(),
             "revoke_token": graphql_jwt.Revoke.Field(),
