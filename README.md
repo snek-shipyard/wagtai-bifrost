@@ -100,7 +100,6 @@ installed_apps = [
     ...
     "bifrost",
     "graphene_django",
-    "channels",
     ...
 ]
 ```

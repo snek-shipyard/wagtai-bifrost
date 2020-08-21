@@ -14,6 +14,18 @@ settings file:
        ...
        "bifrost",
        "graphene_django",
+       ...
+   ]
+
+For GraphQL Subscriptions with Django Channels, run ``pip install wagtail_bifrost[channels]`` and add
+``channels`` to installed apps:
+
+::
+
+   installed_apps = [
+       ...
+       "bifrost",
+       "graphene_django",
        "channels",
        ...
    ]
