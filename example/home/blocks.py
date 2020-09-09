@@ -1,5 +1,6 @@
 from wagtail.core import blocks
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.embeds.blocks import EmbedBlock
 
 from bifrost.helpers import register_streamfield_block
 from bifrost.models import (
@@ -10,9 +11,6 @@ from bifrost.models import (
     GraphQLEmbed,
     GraphQLStreamfield,
 )
-
-from wagtail.images.blocks import ImageChooserBlock
-from wagtail.embeds.blocks import EmbedBlock
 
 
 @register_streamfield_block
