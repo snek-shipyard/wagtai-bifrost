@@ -1,12 +1,12 @@
 # python
 from typing import List
 
-# graphql
-from graphql import ResolveInfo
-
 # graphene_django
 import graphene
 from graphene_django import DjangoObjectType
+
+# graphql
+from graphql import ResolveInfo
 
 # wagtailmenus
 from wagtailmenus.models import FlatMenu, FlatMenuItem, MainMenu, MainMenuItem
@@ -15,12 +15,14 @@ from wagtailmenus.models import FlatMenu, FlatMenuItem, MainMenu, MainMenuItem
 class MenuItem(DjangoObjectType):
     class Meta:
         """Can change over time."""
+
         model = MainMenuItem
 
 
 class Menu(DjangoObjectType):
     class Meta:
         """Can change over time."""
+
         model = MainMenu
         only_fields = ["max_levels", "menu_items"]
 
@@ -28,12 +30,14 @@ class Menu(DjangoObjectType):
 class SecondaryMenuItem(DjangoObjectType):
     class Meta:
         """Can change over time."""
+
         model = FlatMenuItem
 
 
 class SecondaryMenu(DjangoObjectType):
     class Meta:
         """Can change over time."""
+
         model = FlatMenu
         only_fields = ["title", "handle", "heading", "max_levels", "menu_items"]
 

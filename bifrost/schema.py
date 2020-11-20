@@ -1,10 +1,11 @@
-import graphene
-import graphql_jwt
 from django.conf import settings
-from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 # django
 from django.utils.text import camel_case_to_spaces
+
+import graphene
+import graphql_jwt
+from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 # HACK: Remove NoUnusedFragments validator
 # Due to the way previews work on the frontend, we need to pass all
@@ -33,9 +34,31 @@ def create_schema():
     from .types.snippets import SnippetsQuery
     from .types.redirects import RedirectsQuery
 
+    import esite.user.schema
+    import esite.achievement.schema
+    import esite.talk.schema
+    import esite.profile.schema
     from .jwtauth.schema import ObtainJSONWebToken
+    from esite.caching.schema import CacheUser, CacheUserByName
+    # from esite.people.schema import (
+    #     Follow,
+    #     Unfollow,
+    #     Like,
+    #     Unlike,
+    #     UpdatePersonPage,
+    #     VariableStore,
+    #     AddPersonPageMetaLink,
+    #     DeletePersonPageMetaLink,
+    #     CheckPersonPageMetaLink,
+    # )
 
     class Query(
+        # Custom queries start
+        esite.user.schema.Query,
+        esite.achievement.schema.Query,
+        esite.talk.schema.Query,
+        esite.profile.schema.Query,
+        # Custom queries end
         graphene.ObjectType,
         PagesQuery(),
         ImagesQuery(),
@@ -57,7 +80,30 @@ def create_schema():
             "verify_token": graphql_jwt.Verify.Field(),
             "refresh_token": graphql_jwt.Refresh.Field(),
             "revoke_token": graphql_jwt.Revoke.Field(),
+            "cache_user": CacheUser.Field(),
+            "cache_user_by_name": CacheUserByName.Field(),
+            "follow_person": Follow.Field(),
+            "unfollow_person": Unfollow.Field(),
+            "like_person": Like.Field(),
+            "unlike_person": Unlike.Field(),
+            "update_person_page": UpdatePersonPage.Field(),
+            "variable_store": VariableStore.Field(),
+            "add_person_page_meta_link": AddPersonPageMetaLink.Field(),
+            "delete_person_page_meta_link": DeletePersonPageMetaLink.Field(),
+            "check_person_page_meta_link": CheckPersonPageMetaLink.Field(),
+            "add_profile": esite.profile.schema.AddProfile.Field(),
+            "delete_profile": esite.profile.schema.DeleteProfile.Field(),
+            "update_profile": esite.profile.schema.UpdateProfile.Field(),
+            "update_profile": esite.profile.schema.UpdateProfile.Field(),
+            "add_talk": esite.talk.schema.AddTalk.Field(),
+            "delete_talk": esite.talk.schema.DeleteTalk.Field(),
+            "update_talk": esite.talk.schema.UpdateTalk.Field(),
+            "add_talk_comment": esite.talk.schema.AddTalkComment.Field(),
+            "delete_talk_comment": esite.talk.schema.DeleteTalkComment.Field(),
+            "update_talk_comment": esite.talk.schema.UpdateTalkComment.Field(),
+            "redeem_achievement": esite.achievement.schema.RedeemAchievement.Field(),
         }
+
         dict_params.update(
             (camel_case_to_spaces(n).replace(" ", "_"), mut.Field())
             for n, mut in registry.forms.items()
