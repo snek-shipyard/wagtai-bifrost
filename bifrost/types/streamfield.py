@@ -64,6 +64,7 @@ class StreamFieldInterface(graphene.Interface):
 
     def resolve_raw_value(self, info, **kwargs):
         import json
+
         if isinstance(self, dict):
             return json.dumps(serialize_struct_obj(self), sort_keys=True)
 
