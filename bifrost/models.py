@@ -1,5 +1,6 @@
-import graphene
 from django.apps import apps
+
+import graphene
 
 from .registry import registry
 
@@ -99,11 +100,11 @@ def GraphQLForeignKey(field_name, content_type, is_list=False, **kwargs):
     return Mixin
 
 
-def GraphQLStreamfield(field_name: str, **kwargs):
+def GraphQLStreamfield(field_name: str, is_list=True, **kwargs):
     def Mixin():
         from .types.streamfield import StreamFieldInterface
 
-        return GraphQLField(field_name, graphene.List(StreamFieldInterface), **kwargs)
+        return GraphQLField(field_name, StreamFieldInterface, is_list=is_list, **kwargs)
 
     return Mixin
 
