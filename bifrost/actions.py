@@ -1,39 +1,39 @@
-import graphene
-from graphene.types.generic import GenericScalar
 import inspect
-from typing import Type
-from types import MethodType
 from collections.abc import Iterable
+from types import MethodType
+from typing import Type
 
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.utils.text import camel_case_to_spaces
-from wagtail.contrib.settings.models import BaseSetting
+
 from wagtail.contrib.forms.models import AbstractForm
+from wagtail.contrib.settings.models import BaseSetting
+from wagtail.core.blocks import BaseBlock, RichTextBlock, StructValue, stream_block
 from wagtail.core.models import Page as WagtailPage
 from wagtail.documents.models import AbstractDocument
-from wagtail.images.models import AbstractImage, AbstractRendition
 from wagtail.images.blocks import ImageChooserBlock
+from wagtail.images.models import AbstractImage, AbstractRendition
 from wagtail.snippets.models import get_snippet_models
-from graphene_django.types import DjangoObjectType
 
-from .registry import registry
-from .types.pages import PageInterface, Page
-from .types.documents import DocumentObjectType
-from .types.streamfield import generate_streamfield_union
-from .types.images import ImageObjectType
-from .helpers import streamfield_types
+import graphene
+from graphene.types.generic import GenericScalar
+from graphene_django.types import DjangoObjectType
 
 # graphql_jwt
 from graphql_jwt.decorators import login_required
-from .settings import url_prefix_for_site
+
+from .helpers import streamfield_types
 from .permissions import with_page_permissions
+from .registry import registry
+from .settings import url_prefix_for_site
+from .types.documents import DocumentObjectType
 
 # app types
-from .types.forms import (
-    FormError,
-    FormField,
-)
+from .types.forms import FormError, FormField
+from .types.images import ImageObjectType
+from .types.pages import Page, PageInterface
+from .types.streamfield import generate_streamfield_union
 
 
 def import_apps():
@@ -213,6 +213,7 @@ def build_node_type(
     class StubModel(models.Model):
         class Meta:
             """Can change over time."""
+
             managed = False
 
     class StubMeta:
@@ -248,6 +249,7 @@ def load_type_fields():
                 # Recreate the graphene type with the fields set
                 class Meta:
                     """Can change over time."""
+
                     model = cls
                     interfaces = (interface,) if interface is not None else tuple()
 
@@ -284,6 +286,20 @@ def load_type_fields():
                 type_list[key] = node
 
 
+def get_field_value(instance, field_name: str):
+    """
+    Returns the value of a given field on an object of a streamfield.
+    Different types of objects require different ways to access the values.
+    """
+    if isinstance(instance, stream_block.StreamValue):
+        stream_data = dict(instance.stream_data)
+        return stream_data[field_name]
+    elif isinstance(instance, StructValue):
+        return instance[field_name]
+    else:
+        return instance.value[field_name]
+
+
 def convert_to_underscore(name):
     import re
 
@@ -296,7 +312,7 @@ def streamfield_resolver(self, instance, info, **kwargs):
     if hasattr(instance, "block"):
         field_name = convert_to_underscore(info.field_name)
         block = instance.block.child_blocks[field_name]
-        value = instance.value[field_name]
+        value = get_field_value(instance, field_name)
 
         if not block or not value:
             return None
@@ -320,6 +336,7 @@ def build_streamfield_type(
     # Create a new blank node type
     class Meta:
         """Can change over time."""
+
         if hasattr(cls, "graphql_types"):
             types = [
                 registry.streamfield_blocks.get(block) for block in cls.graphql_types
@@ -376,6 +393,7 @@ def register_form_model(cls: Type[AbstractForm], type_prefix: str):
     # dict parameters to create GraphQL type
     class Meta:
         """Can change over time."""
+
         model = WagtailPage
         interfaces = (PageInterface,)
 

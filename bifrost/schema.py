@@ -1,10 +1,11 @@
-import graphene
-import graphql_jwt
 from django.conf import settings
-from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 # django
 from django.utils.text import camel_case_to_spaces
+
+import graphene
+import graphql_jwt
+from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 # HACK: Remove NoUnusedFragments validator
 # Due to the way previews work on the frontend, we need to pass all
@@ -33,9 +34,15 @@ def create_schema():
     from .types.snippets import SnippetsQuery
     from .types.redirects import RedirectsQuery
 
+    import esite.user.schema
+
     from .jwtauth.schema import ObtainJSONWebToken
+    from esite.caching.schema import CacheUser, CacheUserByName
 
     class Query(
+        # Custom queries start
+        esite.user.schema.Query,
+        # Custom queries end
         graphene.ObjectType,
         PagesQuery(),
         ImagesQuery(),
@@ -58,6 +65,7 @@ def create_schema():
             "refresh_token": graphql_jwt.Refresh.Field(),
             "revoke_token": graphql_jwt.Revoke.Field(),
         }
+
         dict_params.update(
             (camel_case_to_spaces(n).replace(" ", "_"), mut.Field())
             for n, mut in registry.forms.items()

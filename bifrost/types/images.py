@@ -1,12 +1,11 @@
-import graphene
-
 from django.conf import settings
-from graphene_django import DjangoObjectType
+
 from wagtail.images import get_image_model
-from wagtail.images.models import (
-    Image as WagtailImage,
-    Rendition as WagtailImageRendition,
-)
+from wagtail.images.models import Image as WagtailImage
+from wagtail.images.models import Rendition as WagtailImageRendition
+
+import graphene
+from graphene_django import DjangoObjectType
 
 # graphql_jwt
 from graphql_jwt.decorators import login_required
@@ -57,6 +56,7 @@ class ImageRenditionObjectType(DjangoObjectType, BaseImageObjectType):
 
     class Meta:
         """Can change over time."""
+
         model = WagtailImageRendition
 
     @login_required
@@ -86,6 +86,7 @@ class ImageObjectType(DjangoObjectType, BaseImageObjectType):
 
     class Meta:
         """Can change over time."""
+
         model = WagtailImage
         exclude_fields = ("tags",)
 
