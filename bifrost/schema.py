@@ -37,20 +37,12 @@ def create_schema():
     import esite.user.schema
 
     from .jwtauth.schema import ObtainJSONWebToken
-    from esite.caching.schema import CacheUser, CacheUserByName
 
     class Query(
-        # Custom queries start
-        esite.user.schema.Query,
         # Custom queries end
+        esite.user.schema.Query,
         graphene.ObjectType,
-        PagesQuery(),
-        ImagesQuery(),
-        DocumentsQuery(),
-        SnippetsQuery(),
-        SettingsQuery(),
         SearchQuery(),
-        RedirectsQuery,
         *registry.schema,
     ):
         pass
