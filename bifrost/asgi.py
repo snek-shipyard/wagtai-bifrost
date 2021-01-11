@@ -5,10 +5,10 @@ For more information on this file, see
 https://docs.djangoproject.com/en/3.0/howto/deployment/asgi/
 """
 
-import os
 
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
+
 from .urls import websocket_urlpatterns
 
 application = ProtocolTypeRouter(
