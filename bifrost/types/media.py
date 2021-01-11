@@ -11,7 +11,7 @@ class MediaObjectType(DjangoObjectType):
         """Can change over time."""
 
         model = Media
-        exclude_fields = ("tags",)
+        exclude = ("tags",)
 
     @login_required
     def resolve_file(self, info, **kwargs):

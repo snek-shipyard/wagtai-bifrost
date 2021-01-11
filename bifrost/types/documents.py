@@ -21,7 +21,7 @@ class DocumentObjectType(DjangoObjectType):
         """Can change over time."""
 
         model = WagtailDocument
-        exclude_fields = ("tags",)
+        exclude = ("tags",)
 
     id = graphene.ID()
     title = graphene.String(required=True)

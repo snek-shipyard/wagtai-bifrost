@@ -114,7 +114,12 @@ def get_fields_and_properties(cls):
     """
     Return all fields and @property methods for a model.
     """
-    fields = [field.name for field in cls._meta.get_fields(include_parents=False)]
+    from graphene_django.utils import get_model_fields
+
+    # Note: graphene-django use this method to get the model fields
+    # cls._meta.get_fields(include_parents=False) includes symmetrical
+    # ManyToMany fields, while get_model_fields doesn't
+    fields = [field for field, instance in get_model_fields(cls)]
 
     properties = []
     try:
@@ -208,14 +213,16 @@ def build_node_type(
     type_name = type_prefix + cls.__name__
 
     # Create a tempory model and tempory node that will be replaced later on.
-    class StubModel(models.Model):
-        class Meta:
-            """Can change over time."""
+    class UnmanagedMeta:
+        app_label = type_name
+        managed = False
 
-            managed = False
+    stub_model = type(
+        type_name, (models.Model,), {"__module__": "", "Meta": UnmanagedMeta}
+    )
 
     class StubMeta:
-        model = StubModel
+        model = stub_model
 
     type_meta = {
         "Meta": StubMeta,
@@ -252,7 +259,20 @@ def load_type_fields():
                     interfaces = (interface,) if interface is not None else tuple()
 
                 type_meta = {"Meta": Meta, "id": graphene.ID(), "name": type_name}
-                exclude_fields = get_fields_and_properties(cls)
+
+                exclude_fields = []
+                for field in get_fields_and_properties(cls):
+                    # Filter out any fields that are defined on the interface of base type to prevent the
+                    # 'Excluding the custom field "<field>" on DjangoObjectType "<cls>" has no effect.
+                    # Either remove the custom field or remove the field from the "exclude" list.' warning
+                    if (
+                        field == "id"
+                        or hasattr(interface, field)
+                        or hasattr(base_type, field)
+                    ):
+                        continue
+
+                    exclude_fields.append(field)
 
                 # Add any custom fields to node if they are defined.
                 methods = {}
