@@ -8,6 +8,7 @@ PyJWT==1.7.1
 wagtailfontawesome==1.1.4
 django-graphql-jwt==0.3.1
 graphene-django-optimizer==0.6.2
+channels==2.4.0
 django-cors-headers==3.4.0
 django-filter==2.4.0
 wagtail-generic-chooser==0.1.1
@@ -18,3 +19,4 @@ factory-boy==2.12.0
 wagtail-factories==2.0.0
 wagtail-headless-preview==0.1.4
 graphene-file-upload==1.2.2
+graphene-subscriptions==1.0.2

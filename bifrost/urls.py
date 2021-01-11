@@ -3,10 +3,11 @@ from django.conf.urls import url
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
-# from channels.routing import route_class
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.urls import path
 from graphene_file_upload.django import FileUploadGraphQLView
 
-# from graphql_ws.django_channels import GraphQLSubscriptionConsumer
+from graphene_subscriptions.consumers import GraphqlSubscriptionConsumer
 
 
 def graphiql(request):
@@ -14,7 +15,7 @@ def graphiql(request):
         "REACT_VERSION": "16.13.1",
         "GRAPHIQL_VERSION": "0.17.5",
         "SUBSCRIPTIONS_TRANSPORT_VERSION": "0.9.16",
-        "subscriptionsEndpoint": "ws://localhost:8000/subscriptions",
+        "subscriptionsEndpoint": "ws://localhost:8000/subscription/",
         "endpointURL": "/graphql",
     }
 
@@ -27,8 +28,9 @@ SHOULD_EXPOSE_GRAPHIQL = settings.DEBUG or getattr(
 )
 urlpatterns = [url(r"^graphql", csrf_exempt(FileUploadGraphQLView.as_view()))]
 
+websocket_urlpatterns = [
+    path("subscription/", GraphqlSubscriptionConsumer),
+]
+
 if SHOULD_EXPOSE_GRAPHIQL:
     urlpatterns.append(url(r"^graphiql", graphiql))
-
-# Django Channel (v1.x) routing for subscription support
-# channel_routing = [route_class(GraphQLSubscriptionConsumer, path=r"^/subscriptions")]

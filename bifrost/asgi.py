@@ -1,6 +1,19 @@
+"""
+ASGI config for z1socialideas project.
+It exposes the ASGI callable as a module-level variable named ``application``.
+For more information on this file, see
+https://docs.djangoproject.com/en/3.0/howto/deployment/asgi/
+"""
+
 import os
 
-# from channels.asgi import get_channel_layer
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from .urls import websocket_urlpatterns
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_subscriptions.settings")
-# channel_layer = get_channel_layer()
+application = ProtocolTypeRouter(
+    {
+        # (http->django views is added by default)
+        "websocket": AuthMiddlewareStack(URLRouter(websocket_urlpatterns)),
+    }
+)
