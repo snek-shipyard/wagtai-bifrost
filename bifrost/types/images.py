@@ -86,7 +86,7 @@ class ImageObjectType(DjangoObjectType, BaseImageObjectType):
         """Can change over time."""
 
         model = WagtailImage
-        exclude_fields = ("tags",)
+        exclude = ("tags",)
 
     def resolve_rendition(self, info, **kwargs):
         """
