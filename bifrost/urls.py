@@ -1,12 +1,9 @@
 from django.conf import settings
 from django.conf.urls import url
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-
-from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 from graphene_file_upload.django import FileUploadGraphQLView
-
 from graphene_subscriptions.consumers import GraphqlSubscriptionConsumer
 
 
