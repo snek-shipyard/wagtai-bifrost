@@ -60,10 +60,15 @@ class StreamFieldInterface(graphene.Interface):
         return self.block.name
 
     def resolve_raw_value(self, info, **kwargs):
-        if isinstance(self.value, dict):
-            return serialize_struct_obj(self.value)
+        import json
 
-        return self.value
+        if isinstance(self, dict):
+            return json.dumps(serialize_struct_obj(self), sort_keys=True)
+
+        if isinstance(self.value, dict):
+            return json.dumps(serialize_struct_obj(self.value), sort_keys=True)
+
+        return json.dumps(self.value, sort_keys=True)
 
 
 def generate_streamfield_union(graphql_types):
@@ -108,7 +113,7 @@ def serialize_struct_obj(obj):
         rtn_obj = []
         for field in obj.stream_data:
             rtn_obj.append(serialize_struct_obj(field["value"]))
-    else:
+    elif isinstance(obj, dict):
         for field in obj:
             value = obj[field]
             if hasattr(value, "stream_data"):
@@ -124,8 +129,14 @@ def serialize_struct_obj(obj):
                 rtn_obj[field] = value.src
             elif hasattr(value, "file"):
                 rtn_obj[field] = value.file.url
+            elif isinstance(value, blocks.StructValue):
+                rtn_obj[field] = dict(value)
+            elif isinstance(value, list):
+                rtn_obj[field] = [serialize_struct_obj(e) for e in value]
             else:
                 rtn_obj[field] = value
+    else:
+        rtn_obj = obj
 
     return rtn_obj
 
