@@ -1,6 +1,5 @@
-from django.apps import apps
-
 import graphene
+from django.apps import apps
 
 from .registry import registry
 

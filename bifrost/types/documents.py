@@ -1,9 +1,10 @@
-from wagtail.documents.models import Document as WagtailDocument, get_document_model
-from graphene_django.types import DjangoObjectType
 import graphene
+from graphene_django.types import DjangoObjectType
 
 # graphql_jwt
 from graphql_jwt.decorators import login_required
+from wagtail.documents import get_document_model
+from wagtail.documents.models import Document as WagtailDocument
 
 from ..registry import registry
 from ..utils import resolve_queryset
@@ -20,7 +21,7 @@ class DocumentObjectType(DjangoObjectType):
         """Can change over time."""
 
         model = WagtailDocument
-        exclude_fields = ("tags",)
+        exclude = ("tags",)
 
     id = graphene.ID()
     title = graphene.String(required=True)

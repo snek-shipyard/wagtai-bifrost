@@ -5,7 +5,6 @@ from django.contrib.auth.models import AnonymousUser
 
 # django
 from django.db.models import Q
-
 from wagtail.core.models import CollectionViewRestriction, PageViewRestriction
 
 # wagtail

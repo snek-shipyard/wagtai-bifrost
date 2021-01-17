@@ -1,12 +1,11 @@
-import graphene
 import inspect
 from types import MethodType
 
+import graphene
 from wagtail.core.models import Page
 
 from .registry import registry
 from .types.streamfield import StreamFieldInterface
-
 
 streamfield_types = []
 

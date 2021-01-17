@@ -1,6 +1,7 @@
+import inspect
+
 import graphene
 import wagtail
-import inspect
 import wagtail.documents.blocks
 import wagtail.embeds.blocks
 import wagtail.images.blocks
@@ -8,8 +9,8 @@ import wagtail.snippets.blocks
 from django.conf import settings
 from graphene.types import Scalar
 from graphene_django.converter import convert_django_field
-from wagtail.core.fields import StreamField
 from wagtail.core import blocks
+from wagtail.core.fields import StreamField
 
 from ..registry import registry
 
@@ -416,9 +417,9 @@ registry.streamfield_blocks.update(
 
 
 def register_streamfield_blocks():
-    from .pages import PageInterface
     from .documents import get_document_type
     from .images import get_image_type
+    from .pages import PageInterface
 
     class PageChooserBlock(graphene.ObjectType):
         page = graphene.Field(PageInterface, required=True)

@@ -1,5 +1,4 @@
 from django.conf import settings
-
 from graphene_django import DjangoObjectType
 
 # graphql_jwt
@@ -10,8 +9,9 @@ from wagtailmedia.models import Media
 class MediaObjectType(DjangoObjectType):
     class Meta:
         """Can change over time."""
+
         model = Media
-        exclude_fields = ("tags",)
+        exclude = ("tags",)
 
     @login_required
     def resolve_file(self, info, **kwargs):
