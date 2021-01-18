@@ -35,7 +35,6 @@ def create_schema():
     from .types.snippets import SnippetsQuery
 
     class Query(
-        graphene.ObjectType,
         PagesQuery(),
         ImagesQuery(),
         DocumentsQuery(),
@@ -44,6 +43,7 @@ def create_schema():
         SearchQuery(),
         RedirectsQuery,
         *registry.queries,
+        graphene.ObjectType,
     ):
         pass
 

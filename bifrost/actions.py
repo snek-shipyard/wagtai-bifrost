@@ -22,7 +22,7 @@ from wagtail.images.blocks import ImageChooserBlock
 from wagtail.images.models import AbstractImage, AbstractRendition
 from wagtail.snippets.models import get_snippet_models
 
-from .helpers import streamfield_types
+from .helpers import register_graphql_schema, streamfield_types
 from .permissions import with_page_permissions
 from .registry import registry
 from .settings import url_prefix_for_site
@@ -85,22 +85,36 @@ def add_app(app_label: str, prefix: str = ""):
     for model in models:
         register_model(model, prefix)
 
-    # Register schema from the app
-    register_schema(app.name)
+
+def import_app_schema():
+    """
+    Iterate through each app and register its schema file.
+    """
+    apps = settings.BIFROST_APPS.items()
+
+    for name, prefix in apps:
+        register_schema(name)
 
 
-def register_schema(app_name: str):
+def register_schema(app_label: str):
+    """
+    Import schema from app and register its content.
+    """
+    from django.apps import apps
+
+    app_name = apps.get_app_config(app_label).name
+
     try:
         schema = importlib.import_module("%s.schema" % app_name)
     except:
         return None
 
     if hasattr(schema, "Query"):
-        registry.queries.append(schema.Query)
+        register_graphql_schema(Query=schema.Query)
     if hasattr(schema, "Mutation"):
-        registry.mutations.append(schema.Mutation)
+        register_graphql_schema(Mutation=schema.Mutation)
     if hasattr(schema, "Subscription"):
-        registry.subscriptions.append(schema.Subscription)
+        register_graphql_schema(Subscription=schema.Subscription)
 
 
 def register_model(cls: type, type_prefix: str):

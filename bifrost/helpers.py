@@ -28,9 +28,13 @@ def register_streamfield_block(cls):
     return cls
 
 
-def register_graphql_schema(schema_cls):
-    registry.schema.append(schema_cls)
-    return schema_cls
+def register_graphql_schema(Query=None, Mutation=None, Subscription=None):
+    if Query:
+        registry.queries.append(Query)
+    if Mutation:
+        registry.mutations.append(Mutation)
+    if Subscription:
+        registry.subscriptions.append(Subscription)
 
 
 def register_query_field(field_name, plural_field_name=None, query_params=None):
@@ -95,7 +99,7 @@ def register_query_field(field_name, plural_field_name=None, query_params=None):
             return schema
 
         # Send schema to Bifrost schema.
-        register_graphql_schema(Mixin())
+        register_graphql_schema(Query=Mixin())
         return cls
 
     return inner
@@ -217,7 +221,7 @@ def register_paginated_query_field(
             return schema
 
         # Send schema to Bifrost schema.
-        register_graphql_schema(Mixin())
+        register_graphql_schema(Query=Mixin())
         return cls
 
     return inner

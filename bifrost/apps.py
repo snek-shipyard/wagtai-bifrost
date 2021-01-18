@@ -7,11 +7,13 @@ class Bifrost(AppConfig):
     def ready(self):
         """
         Import all the django apps defined in django settings then process each model
-        in these apps and create graphql node types from them.
+        in these apps and create graphql node types from them. Then the schema file
+        of all apps are imported.
         """
-        from .actions import import_apps, load_type_fields
+        from .actions import import_apps, import_app_schema, load_type_fields
         from .types.streamfield import register_streamfield_blocks
 
         import_apps()
         load_type_fields()
         register_streamfield_blocks()
+        import_app_schema()
