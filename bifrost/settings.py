@@ -4,6 +4,9 @@ from django.conf import settings
 # graphql
 from graphql import ResolveInfo
 
+# time
+from datetime import timedelta
+
 # settings
 if hasattr(settings, "GRAPHQL_API"):
     SETTINGS = settings.GRAPHQL_API
@@ -13,6 +16,23 @@ else:  # pragma: no cover
 URL_PREFIX = SETTINGS.get("URL_PREFIX", {})
 LOAD_GENERIC_SCALARS = SETTINGS.get("GENERIC_SCALARS", True)
 RELAY = SETTINGS.get("RELAY", False)
+
+GRAPHENE = {
+    "SCHEMA": "bifrost.schema.schema",
+    "MIDDLEWARE": ["graphql_jwt.middleware.JSONWebTokenMiddleware"],
+}
+GRAPHQL_JWT = {
+    "JWT_ALLOW_ARGUMENT": True,
+    "JWT_VERIFY_EXPIRATION": True,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+    "JWT_EXPIRATION_DELTA": timedelta(minutes=5),
+    "JWT_REFRESH_EXPIRATION_DELTA": timedelta(days=7),
+}
+
+AUTHENTICATION_BACKENDS = [
+    "graphql_jwt.backends.JSONWebTokenBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
 
 # wagtail settings
 try:
