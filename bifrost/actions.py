@@ -1,7 +1,9 @@
 import inspect
+import importlib
 from collections.abc import Iterable
 from types import MethodType
 from typing import Type
+from django.utils.module_loading import import_string
 
 import graphene
 from django.conf import settings
@@ -83,7 +85,23 @@ def add_app(app_label: str, prefix: str = ""):
     # Create add each model to correct section of registry.
     for model in models:
         register_model(model, prefix)
+        
+    # Register schema from the app
+    register_schema(app.name)
+    
 
+def register_schema(app_name: str):
+    try:
+        schema = importlib.import_module("%s.schema" % app_name)
+    except:
+        return None
+    
+    if hasattr(schema, "Query"):
+        registry.queries.append(schema.Query)
+    if hasattr(schema, "Mutation"):
+        registry.mutations.append(schema.Mutation)
+    if hasattr(schema, "Subscription"):
+        registry.subscriptions.append(schema.Subscription)
 
 def register_model(cls: type, type_prefix: str):
     """

@@ -6,6 +6,9 @@ class RegistryItem(dict):
 
 class Registry:
     apps = []
+    queries = []
+    mutations = []
+    subscriptions = []
     pages = RegistryItem()
     documents = RegistryItem()
     images = RegistryItem()

@@ -48,11 +48,11 @@ def create_schema():
         SettingsQuery(),
         SearchQuery(),
         RedirectsQuery,
-        *registry.schema,
+        *registry.queries,
     ):
         pass
 
-    class Subscription(PagesSubscription(), graphene.ObjectType):
+    class Subscription(PagesSubscription(), *registry.subscriptions, graphene.ObjectType):
         pass
 
     def mutation_parameters() -> dict:
@@ -63,6 +63,7 @@ def create_schema():
             "refresh_token": graphql_jwt.Refresh.Field(),
             "revoke_token": graphql_jwt.Revoke.Field(),
         }
+
         dict_params.update(
             (camel_case_to_spaces(n).replace(" ", "_"), mut.Field())
             for n, mut in registry.forms.items()
@@ -70,10 +71,13 @@ def create_schema():
         return dict_params
 
     Mutations = type("Mutation", (graphene.ObjectType,), mutation_parameters())
+    
+    class Mutation(Mutations, *registry.mutations):
+        pass
 
     return graphene.Schema(
         query=Query,
-        mutation=Mutations,
+        mutation=Mutation,
         subscription=Subscription,
         types=list(registry.models.values()),
         auto_camelcase=getattr(settings, "BIFROST_AUTO_CAMELCASE", True),
