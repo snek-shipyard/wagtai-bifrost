@@ -39,6 +39,7 @@ def GraphQLString(field_name: str, **kwargs):
 
     return Mixin
 
+
 def GraphqlDatetime(field_name: str, **kwargs):
     def Mixin():
         return GraphQLField(field_name, graphene.DateTime, **kwargs)

@@ -54,6 +54,7 @@ class ImageRenditionObjectType(DjangoObjectType, BaseImageObjectType):
 
     class Meta:
         """Can change over time."""
+
         model = WagtailImageRendition
 
     @login_required

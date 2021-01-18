@@ -1,11 +1,11 @@
 # django
+# time
+from datetime import timedelta
+
 from django.conf import settings
 
 # graphql
 from graphql import ResolveInfo
-
-# time
-from datetime import timedelta
 
 # settings
 if hasattr(settings, "GRAPHQL_API"):

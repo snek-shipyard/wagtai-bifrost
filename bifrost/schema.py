@@ -1,13 +1,9 @@
 import graphene
 import graphql_jwt
 from django.conf import settings
-from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 # django
 from django.utils.text import camel_case_to_spaces
-
-import graphene
-import graphql_jwt
 from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 # HACK: Remove NoUnusedFragments validator
@@ -28,16 +24,15 @@ def create_schema():
     Root schema object that graphene is pointed at.
     It inherits its queries from each of the specific type mixins.
     """
+    from .jwtauth.schema import ObtainJSONWebToken, ObtainPrivilegedJSONWebToken
     from .registry import registry
     from .types.documents import DocumentsQuery
     from .types.images import ImagesQuery
     from .types.pages import PagesQuery, PagesSubscription
+    from .types.redirects import RedirectsQuery
     from .types.search import SearchQuery
     from .types.settings import SettingsQuery
     from .types.snippets import SnippetsQuery
-    from .types.redirects import RedirectsQuery
-
-    from .jwtauth.schema import ObtainJSONWebToken, ObtainPrivilegedJSONWebToken
 
     class Query(
         graphene.ObjectType,
@@ -52,7 +47,9 @@ def create_schema():
     ):
         pass
 
-    class Subscription(PagesSubscription(), *registry.subscriptions, graphene.ObjectType):
+    class Subscription(
+        PagesSubscription(), *registry.subscriptions, graphene.ObjectType
+    ):
         pass
 
     def mutation_parameters() -> dict:
@@ -71,7 +68,7 @@ def create_schema():
         return dict_params
 
     Mutations = type("Mutation", (graphene.ObjectType,), mutation_parameters())
-    
+
     class Mutation(Mutations, *registry.mutations):
         pass
 

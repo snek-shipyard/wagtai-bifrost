@@ -1,15 +1,14 @@
-from django.contrib.auth import get_user_model
-from wagtail.core.models import Page as wagtailPage
-from graphene.types.generic import GenericScalar
 import graphene
 import graphql_jwt
+from django.contrib.auth import get_user_model
+from graphene.types.generic import GenericScalar
 from graphql import GraphQLError
-
-from ..types.pages import Page
-from ..registry import registry
+from wagtail.core.models import Page as wagtailPage
 
 from bifrost.permissions import with_page_permissions
-from django.contrib.auth.decorators import user_passes_test
+
+from ..registry import registry
+from ..types.pages import Page
 
 # Create your registration related graphql schemes here.
 

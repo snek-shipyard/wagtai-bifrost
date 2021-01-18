@@ -76,6 +76,7 @@ def generate_streamfield_union(graphql_types):
     class StreamfieldUnion(graphene.Union):
         class Meta:
             """Can change over time."""
+
             types = graphql_types
 
         @classmethod
@@ -145,6 +146,7 @@ def serialize_struct_obj(obj):
 class StructBlock(graphene.ObjectType):
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
     blocks = graphene.List(graphene.NonNull(StreamFieldInterface), required=True)
@@ -167,6 +169,7 @@ class StructBlock(graphene.ObjectType):
 class StreamBlock(StructBlock):
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
     def resolve_blocks(self, info, **kwargs):
@@ -200,6 +203,7 @@ class StreamFieldBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -208,6 +212,7 @@ class CharBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -216,6 +221,7 @@ class TextBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -224,6 +230,7 @@ class EmailBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -232,6 +239,7 @@ class IntegerBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -240,6 +248,7 @@ class FloatBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -248,6 +257,7 @@ class DecimalBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -256,6 +266,7 @@ class RegexBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -264,6 +275,7 @@ class URLBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -272,6 +284,7 @@ class BooleanBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -280,6 +293,7 @@ class DateBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
     def resolve_value(self, info, **kwargs):
@@ -292,12 +306,14 @@ class DateBlock(graphene.ObjectType):
 class DateTimeBlock(DateBlock):
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
 class TimeBlock(DateBlock):
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -306,6 +322,7 @@ class RichTextBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -314,6 +331,7 @@ class RawHTMLBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -322,6 +340,7 @@ class BlockQuoteBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -336,6 +355,7 @@ class ChoiceBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
     def resolve_choices(self, info, **kwargs):
@@ -358,6 +378,7 @@ class EmbedBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
     def resolve_url(self, info, **kwargs):
@@ -371,6 +392,7 @@ class StaticBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
 
@@ -379,6 +401,7 @@ class ListBlock(graphene.ObjectType):
 
     class Meta:
         """Can change over time."""
+
         interfaces = (StreamFieldInterface,)
 
     def resolve_items(self, info, **kwargs):
@@ -426,6 +449,7 @@ def register_streamfield_blocks():
 
         class Meta:
             """Can change over time."""
+
             interfaces = (StreamFieldInterface,)
 
         def resolve_page(self, info, **kwargs):
@@ -436,6 +460,7 @@ def register_streamfield_blocks():
 
         class Meta:
             """Can change over time."""
+
             interfaces = (StreamFieldInterface,)
 
         def resolve_document(self, info, **kwargs):
@@ -446,6 +471,7 @@ def register_streamfield_blocks():
 
         class Meta:
             """Can change over time."""
+
             interfaces = (StreamFieldInterface,)
 
         def resolve_image(self, info, **kwargs):
@@ -456,6 +482,7 @@ def register_streamfield_blocks():
 
         class Meta:
             """Can change over time."""
+
             interfaces = (StreamFieldInterface,)
 
         def resolve_snippet(self, info, **kwargs):
