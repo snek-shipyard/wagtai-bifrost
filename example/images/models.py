@@ -1,8 +1,7 @@
 from django.db import models
+from wagtail.images.models import AbstractImage, AbstractRendition, Image
 
-from wagtail.images.models import Image, AbstractImage, AbstractRendition
-
-from bifrost.models import GraphQLString, GraphQLInt, GraphQLImage
+from bifrost.models import GraphQLImage, GraphQLString
 
 
 class CustomImage(AbstractImage):

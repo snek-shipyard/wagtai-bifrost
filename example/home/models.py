@@ -1,39 +1,30 @@
 import graphene
 from django.db import models
+from home.blocks import StreamFieldBlock
 from modelcluster.fields import ParentalKey
-
-from wagtail.core.models import Page, Orderable
-from wagtail.core.fields import StreamField
+from wagtail.admin.edit_handlers import FieldPanel, InlinePanel, StreamFieldPanel
 from wagtail.contrib.settings.models import BaseSetting, register_setting
-
-from wagtail.core import blocks
-from wagtail.admin.edit_handlers import FieldPanel, StreamFieldPanel, InlinePanel
-from wagtail.images.blocks import ImageChooserBlock
-from wagtail.documents.blocks import DocumentChooserBlock
-from wagtail.embeds.blocks import EmbedBlock
-from wagtail.snippets.models import register_snippet
-from wagtail.snippets.blocks import SnippetChooserBlock
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
-from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.core.fields import StreamField
+from wagtail.core.models import Orderable, Page
 from wagtail.documents.edit_handlers import DocumentChooserPanel
-
+from wagtail.images.edit_handlers import ImageChooserPanel
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
+from wagtail.snippets.models import register_snippet
 from wagtail_headless_preview.models import HeadlessPreviewMixin
 from wagtailmedia.edit_handlers import MediaChooserPanel
 
 from bifrost.helpers import register_query_field
 from bifrost.models import (
-    GraphQLField,
-    GraphQLString,
-    GraphQLSnippet,
-    GraphQLStreamfield,
+    GraphQLCollection,
+    GraphQLDocument,
     GraphQLForeignKey,
     GraphQLImage,
-    GraphQLDocument,
     GraphQLMedia,
-    GraphQLCollection,
     GraphQLPage,
+    GraphQLSnippet,
+    GraphQLStreamfield,
+    GraphQLString,
 )
-from home.blocks import StreamFieldBlock
 
 
 class HomePage(Page):

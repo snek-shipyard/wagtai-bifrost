@@ -4,7 +4,7 @@ import factory
 import wagtail_factories
 from factory import fuzzy
 from home.blocks import ImageGalleryBlock, ImageGalleryImage, ImageGalleryImages
-from home.models import BlogPage, BlogPageRelatedLink, AuthorPage, Advert
+from home.models import Advert, AuthorPage, BlogPage, BlogPageRelatedLink
 from wagtail.core import blocks
 
 

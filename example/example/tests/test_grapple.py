@@ -3,9 +3,7 @@ from pydoc import locate
 
 from django.conf import settings
 from django.test import TestCase, override_settings
-
 from graphene.test import Client
-
 from wagtail.core.models import Page
 
 from bifrost.schema import create_schema

@@ -3,18 +3,13 @@ import decimal
 
 import wagtail_factories
 from django.conf import settings
-from wagtail.core.blocks import BoundBlock, StreamValue, StructValue
+from home.blocks import ImageGalleryImages
+from home.factories import BlogPageFactory
+from wagtail.core.blocks import StreamValue
 from wagtail.core.rich_text import RichText
 from wagtail.embeds.blocks import EmbedValue
 
 from example.tests.test_bifrost import BaseBifrostTest
-from home.blocks import ImageGalleryImage, ImageGalleryImages, VideoBlock
-from home.factories import (
-    BlogPageFactory,
-    BlogPageRelatedLinkFactory,
-    ImageGalleryImageFactory,
-    AuthorPageFactory,
-)
 
 
 class BlogTest(BaseBifrostTest):

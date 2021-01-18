@@ -1,5 +1,6 @@
-from example.tests.test_bifrost import BaseBifrostTest
 from home.factories import AdvertFactory
+
+from example.tests.test_bifrost import BaseBifrostTest
 
 
 class AdvertTest(BaseBifrostTest):
