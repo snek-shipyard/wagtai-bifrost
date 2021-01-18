@@ -55,18 +55,20 @@ INSTALLED_APPS = [
     "graphene_django",
     "channels",
 ]
-
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
+    # Django core middleware
+    "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
-    "wagtail.core.middleware.SiteMiddleware",
+    # Wagtail core middleware
+    "wagtail.contrib.legacy.sitemiddleware.SiteMiddleware",
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    # Third party middleware
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "example.urls"
@@ -170,12 +172,9 @@ BIFROST_ADD_SEARCH_HIT = True
 HEADLESS_PREVIEW_CLIENT_URLS = {"default": "http://localhost:8001/preview"}
 HEADLESS_PREVIEW_LIVE = True
 
-ASGI_APPLICATION = "asgi.channel_layer"
-CHANNELS_WS_PROTOCOLS = ["graphql-ws"]
+ASGI_APPLICATION = "bifrost.asgi.application"
 CHANNEL_LAYERS = {
     "default": {
-        # "BACKEND": "asgi_redis.RedisChannelLayer",
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "bifrost.urls.channel_routing",
-    }
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
 }
