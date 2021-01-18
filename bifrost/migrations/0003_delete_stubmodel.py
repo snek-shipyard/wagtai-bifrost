@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("bifrost", "0001_initial"),
+        ("bifrost", "0002_stubmodel"),
     ]
 
     operations = [

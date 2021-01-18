@@ -1,12 +1,13 @@
-Django>=2.2,<2.3
-wagtail>=2.5,<2.9
-graphene-django==2.7.1
-channels==1.1.8
-asgi_redis
-graphql_ws
+Django>=3.1.0,<3.2.0
+wagtail>=2.11.0,<2.12.0
+graphene-django>=2.7.1, <2.14.0
+django-graphql-jwt==0.3.1
+channels==2.4.0
+graphene-file-upload==1.2.2
+graphene-subscriptions==1.0.2
 wagtailmedia
 graphql-core==2.2.1
 factory-boy==2.12.0
 wagtail-factories==2.0.0
-django-cors-headers==3.0.2
+django-cors-headers==3.4.0
 wagtail-headless-preview==0.1.4

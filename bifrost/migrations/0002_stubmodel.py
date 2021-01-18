@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [("bifrost", "0002_delete_pagepreview")]
+    dependencies = [("bifrost", "0001_initial")]
 
     operations = [
         migrations.CreateModel(
