@@ -10,7 +10,7 @@ class Bifrost(AppConfig):
         in these apps and create graphql node types from them. Then the schema file
         of all apps are imported.
         """
-        from .actions import import_apps, import_app_schema, load_type_fields
+        from .actions import import_app_schema, import_apps, load_type_fields
         from .types.streamfield import register_streamfield_blocks
 
         import_apps()
