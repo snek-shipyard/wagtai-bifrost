@@ -108,7 +108,7 @@ class ImageObjectType(DjangoObjectType, BaseImageObjectType):
         except:
             return None
 
-    def resolve_src_set(self, info, sizes, **kwargs):
+    def resolve_src_set(self, info, sizes=[], **kwargs):
         """
         Generate src set of renditions.
         """
