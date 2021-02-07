@@ -16,7 +16,6 @@ from ..types.pages import Page
 class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
 
     user = graphene.Field(registry.models[get_user_model()])
-    profile = graphene.Field(Page)
 
     @classmethod
     def resolve(cls, root, info, **kwargs):
@@ -25,14 +24,7 @@ class ObtainJSONWebToken(graphql_jwt.JSONWebTokenMutation):
         if user.is_superuser:
             raise GraphQLError("Something went wrong")
 
-        profilequery = wagtailPage.objects.filter(slug=f"{user.username}")
-
-        return cls(
-            user=info.context.user,
-            profile=with_page_permissions(info.context, profilequery.specific())
-            .live()
-            .first(),
-        )
+        return cls(user=info.context.user)
 
 
 class ObtainPrivilegedJSONWebToken(graphene.Mutation):
