@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "home",
     "images",
     "search",
+    "wagtail.contrib.modeladmin",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "wagtail_headless_preview",
+    "wagtailfontawesome",
     # BIFROST SPECIFIC MODULES
     "bifrost",
     "graphene_django",
