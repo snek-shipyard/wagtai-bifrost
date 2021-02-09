@@ -176,7 +176,7 @@ HEADLESS_PREVIEW_LIVE = True
 
 ASGI_APPLICATION = "bifrost.asgi.application"
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
+
+# Private file storage
+PRIVATE_STORAGE_ROOT = "private_media/"
 }
