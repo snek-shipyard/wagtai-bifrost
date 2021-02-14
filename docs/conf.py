@@ -23,7 +23,7 @@ copyright = "2020, Nico Schett"
 author = "Nico Schett"
 
 # The full version, including alpha/beta/rc tags
-release = "3.0.1"
+release = "3.1.0"
 
 
 # -- General configuration ---------------------------------------------------

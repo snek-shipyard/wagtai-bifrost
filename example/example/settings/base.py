@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     "home",
     "images",
     "search",
+    "wagtail.contrib.modeladmin",
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
     "wagtail.embeds",
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     "wagtail_headless_preview",
+    "wagtailfontawesome",
     # BIFROST SPECIFIC MODULES
     "bifrost",
     "graphene_django",
@@ -173,8 +175,7 @@ HEADLESS_PREVIEW_CLIENT_URLS = {"default": "http://localhost:8001/preview"}
 HEADLESS_PREVIEW_LIVE = True
 
 ASGI_APPLICATION = "bifrost.asgi.application"
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
-    },
-}
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+
+# Private file storage
+PRIVATE_STORAGE_ROOT = "private_media/"
