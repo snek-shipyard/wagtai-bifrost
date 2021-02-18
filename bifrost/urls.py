@@ -15,7 +15,7 @@ urlpatterns = [
     ),
 ]
 
-websocket_urlpatterns = [path("graphql/", GraphqlSubscriptionConsumer)]
+websocket_urlpatterns = [path("graphql", GraphqlSubscriptionConsumer)]
 
 # if SHOULD_EXPOSE_GRAPHIQL:
 #     urlpatterns.append(url(r"^graphiql", graphiql))
