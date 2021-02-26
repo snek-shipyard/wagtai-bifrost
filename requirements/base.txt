@@ -14,3 +14,4 @@ django-cors-headers==3.4.0
 wagtail-headless-preview==0.1.4
 wagtailfontawesome==1.2.1
 django-private-storage==2.2.2
+python-graphql-client~=0.4.2
