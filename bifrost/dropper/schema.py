@@ -6,7 +6,6 @@ from urllib.parse import urlsplit
 import graphene
 import requests
 from django.core.files import File
-from graphene.types.generic import GenericScalar
 from graphql import GraphQLError
 from graphql_jwt.decorators import superuser_required
 from python_graphql_client import GraphqlClient
@@ -112,9 +111,7 @@ class RequestDropperBridgeDrop(graphene.Mutation):
 
             taskId = request_bridge_drop_data["data"]["requestBridgeDrop"]["taskId"]
 
-            return RequestDropperBridgeDrop(
-                taskId=taskId,
-            )
+            return RequestDropperBridgeDrop(taskId=taskId)
         except Exception as ex:
             raise GraphQLError(ex)
 

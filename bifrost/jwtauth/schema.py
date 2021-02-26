@@ -5,7 +5,6 @@ from graphene.types.generic import GenericScalar
 from graphene_django import DjangoObjectType
 from graphql import GraphQLError
 
-
 # Create your registration related graphql schemes here.
 
 
