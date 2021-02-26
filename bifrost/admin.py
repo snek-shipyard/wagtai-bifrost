@@ -1,3 +1,4 @@
+from django.conf import settings
 from wagtail.contrib.modeladmin.options import (
     ModelAdmin,
     ModelAdminGroup,
@@ -25,4 +26,5 @@ class BifrostAdmin(ModelAdminGroup):
     items = (BifrostFileAdmin,)
 
 
-modeladmin_register(BifrostAdmin)
+if getattr(settings, "BIFROST_FILES", False):
+    modeladmin_register(BifrostAdmin)

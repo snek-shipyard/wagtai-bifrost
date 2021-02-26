@@ -18,6 +18,68 @@ from graphql.validation.rules import NoUnusedFragments, specified_rules
 
 specified_rules[:] = [rule for rule in specified_rules if rule is not NoUnusedFragments]
 
+# We load all Queries, Mutations and Subscriptions into the registry if not excluded
+# by settings.
+
+import bifrost.dropper.schema
+import bifrost.files.schema
+import bifrost.types.documents
+import bifrost.types.images
+import bifrost.types.redirects
+import bifrost.types.search
+import bifrost.types.settings
+import bifrost.types.snippets
+
+from .registry import registry
+
+QUERIES = [
+    {
+        "cls": bifrost.files.schema.Query,
+        "active": getattr(settings, "BIFROST_FILES", False),
+    },
+    {
+        "cls": bifrost.dropper.schema.Query,
+        "active": getattr(settings, "BIFROST_DROPPER", False),
+    },
+    {
+        "cls": bifrost.types.documents.DocumentsQuery(),
+        "active": getattr(settings, "BIFROST_DOCUMENTS", False),
+    },
+    {
+        "cls": bifrost.types.images.ImagesQuery(),
+        "active": getattr(settings, "BIFROST_IMAGES", False),
+    },
+    {
+        "cls": bifrost.types.redirects.RedirectsQuery,
+        "active": getattr(settings, "BIFROST_REDIRECTS", False),
+    },
+    {
+        "cls": bifrost.types.search.SearchQuery(),
+        "active": getattr(settings, "BIFROST_SEARCH", False),
+    },
+    {
+        "cls": bifrost.types.settings.SettingsQuery(),
+        "active": getattr(settings, "BIFROST_SETTINGS", False),
+    },
+    {
+        "cls": bifrost.types.snippets.SnippetsQuery(),
+        "active": getattr(settings, "BIFROST_SNIPPETS", False),
+    },
+]
+
+MUTATIONS = [
+    {
+        "cls": bifrost.dropper.schema.Mutation,
+        "active": getattr(settings, "BIFROST_DROPPER", False),
+    }
+]
+
+SUBSCRIPTIONS = []
+
+registry.queries += [o["cls"] for o in QUERIES if o["active"]]
+registry.mutations += [o["cls"] for o in MUTATIONS if o["active"]]
+registry.subscriptions += [o["cls"] for o in SUBSCRIPTIONS if o["active"]]
+
 
 def create_schema():
     """
@@ -25,26 +87,9 @@ def create_schema():
     It inherits its queries from each of the specific type mixins.
     """
     from .jwtauth.schema import ObtainJSONWebToken, ObtainPrivilegedJSONWebToken
-    from .registry import registry
-    from .types.documents import DocumentsQuery
-    from .types.images import ImagesQuery
     from .types.pages import PagesQuery, PagesSubscription
-    from .types.redirects import RedirectsQuery
-    from .types.search import SearchQuery
-    from .types.settings import SettingsQuery
-    from .types.snippets import SnippetsQuery
 
-    class Query(
-        PagesQuery(),
-        ImagesQuery(),
-        DocumentsQuery(),
-        SnippetsQuery(),
-        SettingsQuery(),
-        SearchQuery(),
-        RedirectsQuery,
-        *registry.queries,
-        graphene.ObjectType,
-    ):
+    class Query(PagesQuery(), *registry.queries, graphene.ObjectType):
         pass
 
     class Subscription(
