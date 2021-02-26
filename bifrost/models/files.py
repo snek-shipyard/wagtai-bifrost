@@ -1,6 +1,7 @@
 import binascii
 import os
 
+from django.conf import settings
 from django.db import models
 from private_storage.fields import PrivateFileField
 
@@ -16,3 +17,8 @@ class BifrostFile(models.Model):
 
     def __str__(self) -> str:
         return self.file.name
+
+    def get_download_url(self) -> str:
+        return (settings.BASE_URL + self.file.url).replace(
+            "://", f"://{self.access_token}@"
+        )

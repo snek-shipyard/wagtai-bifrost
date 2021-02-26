@@ -3,7 +3,7 @@
 from django.db import migrations, models
 from private_storage.fields import PrivateFileField
 
-import bifrost.files
+import bifrost.models.files
 
 
 class Migration(migrations.Migration):
@@ -25,7 +25,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "access_token",
-                    models.CharField(default=bifrost.files.generate_key, max_length=40),
+                    models.CharField(
+                        default=bifrost.models.files.generate_key, max_length=40
+                    ),
                 ),
                 ("file", PrivateFileField()),
             ],
