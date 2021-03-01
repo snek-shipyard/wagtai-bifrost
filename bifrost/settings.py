@@ -1,7 +1,7 @@
-# django
 # time
 from datetime import timedelta
 
+# django
 from django.conf import settings
 
 # graphql
@@ -44,3 +44,27 @@ except ImportError:  # pragma: no cover
 def url_prefix_for_site(info: ResolveInfo):
     hostname = info.context.site.hostname
     return URL_PREFIX.get(hostname, info.context.site.root_page.url_path.rstrip("/"))
+
+
+# > Bifrost settings
+# General
+BIFROST_AUTO_CAMELCASE = getattr(settings, "BIFROST_AUTO_CAMELCASE", True)
+# Dropper connection
+BIFROST_DROPPER_ENDPOINT = getattr(
+    settings, "BIFROST_DROPPER_ENDPOINT", "https://dropper.snek.at/graphql"
+)
+BIFROST_DROPPER_SOCKET_ENDPOINT = getattr(
+    settings, "BIFROST_DROPPER_SOCKET_ENDPOINT", "wss://dropper.snek.at/graphql"
+)
+BIFROST_DROPPER_HEIMDALL_LICENSE = getattr(
+    settings, "BIFROST_DROPPER_HEIMDALL_LICENSE", None
+)
+# Conditional schema registration
+BIFROST_API_FILES = getattr(settings, "BIFROST_API_FILES", False)
+BIFROST_API_DROPPER = getattr(settings, "BIFROST_API_DROPPER", False)
+BIFROST_API_DOCUMENTS = getattr(settings, "BIFROST_API_DOCUMENTS", False)
+BIFROST_API_IMAGES = getattr(settings, "BIFROST_API_IMAGES", False)
+BIFROST_API_REDIRECTS = getattr(settings, "BIFROST_API_REDIRECTS", False)
+BIFROST_API_SEARCH = getattr(settings, "BIFROST_API_SEARCH", False)
+BIFROST_API_SETTINGS = getattr(settings, "BIFROST_API_SETTINGS", False)
+BIFROST_API_SNIPPETS = getattr(settings, "BIFROST_API_SNIPPETS", False)

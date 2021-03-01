@@ -1,6 +1,5 @@
 import graphene
 import graphql_jwt
-from django.conf import settings
 
 # django
 from django.utils.text import camel_case_to_spaces
@@ -31,48 +30,29 @@ import bifrost.types.settings
 import bifrost.types.snippets
 
 from .registry import registry
+from .settings import (
+    BIFROST_API_DOCUMENTS,
+    BIFROST_API_DROPPER,
+    BIFROST_API_FILES,
+    BIFROST_API_IMAGES,
+    BIFROST_API_REDIRECTS,
+    BIFROST_API_SEARCH,
+    BIFROST_API_SETTINGS,
+    BIFROST_API_SNIPPETS,
+    BIFROST_AUTO_CAMELCASE,
+)
 
 QUERIES = [
-    {
-        "cls": bifrost.files.schema.Query,
-        "active": getattr(settings, "BIFROST_FILES", False),
-    },
-    {
-        "cls": bifrost.dropper.schema.Query,
-        "active": getattr(settings, "BIFROST_DROPPER", False),
-    },
-    {
-        "cls": bifrost.types.documents.DocumentsQuery(),
-        "active": getattr(settings, "BIFROST_DOCUMENTS", False),
-    },
-    {
-        "cls": bifrost.types.images.ImagesQuery(),
-        "active": getattr(settings, "BIFROST_IMAGES", False),
-    },
-    {
-        "cls": bifrost.types.redirects.RedirectsQuery,
-        "active": getattr(settings, "BIFROST_REDIRECTS", False),
-    },
-    {
-        "cls": bifrost.types.search.SearchQuery(),
-        "active": getattr(settings, "BIFROST_SEARCH", False),
-    },
-    {
-        "cls": bifrost.types.settings.SettingsQuery(),
-        "active": getattr(settings, "BIFROST_SETTINGS", False),
-    },
-    {
-        "cls": bifrost.types.snippets.SnippetsQuery(),
-        "active": getattr(settings, "BIFROST_SNIPPETS", False),
-    },
+    {"cls": bifrost.files.schema.Query, "active": BIFROST_API_FILES},
+    {"cls": bifrost.types.documents.DocumentsQuery(), "active": BIFROST_API_DOCUMENTS},
+    {"cls": bifrost.types.images.ImagesQuery(), "active": BIFROST_API_IMAGES},
+    {"cls": bifrost.types.redirects.RedirectsQuery, "active": BIFROST_API_REDIRECTS},
+    {"cls": bifrost.types.search.SearchQuery(), "active": BIFROST_API_SEARCH},
+    {"cls": bifrost.types.settings.SettingsQuery(), "active": BIFROST_API_SETTINGS},
+    {"cls": bifrost.types.snippets.SnippetsQuery(), "active": BIFROST_API_SNIPPETS},
 ]
 
-MUTATIONS = [
-    {
-        "cls": bifrost.dropper.schema.Mutation,
-        "active": getattr(settings, "BIFROST_DROPPER", False),
-    }
-]
+MUTATIONS = [{"cls": bifrost.dropper.schema.Mutation, "active": BIFROST_API_DROPPER}]
 
 SUBSCRIPTIONS = []
 
