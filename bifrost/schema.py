@@ -66,7 +66,7 @@ def create_schema():
     Root schema object that graphene is pointed at.
     It inherits its queries from each of the specific type mixins.
     """
-    from .jwtauth.schema import ObtainJSONWebToken, ObtainPrivilegedJSONWebToken
+    from .jwtauth.schema import ObtainJSONWebToken
     from .types.pages import PagesQuery, PagesSubscription
 
     class Query(PagesQuery(), *registry.queries, graphene.ObjectType):
@@ -80,7 +80,6 @@ def create_schema():
     def mutation_parameters() -> dict:
         dict_params = {
             "token_auth": ObtainJSONWebToken.Field(),
-            "privileged_token_auth": ObtainPrivilegedJSONWebToken.Field(),
             "verify_token": graphql_jwt.Verify.Field(),
             "refresh_token": graphql_jwt.Refresh.Field(),
             "revoke_token": graphql_jwt.Revoke.Field(),
