@@ -14,6 +14,8 @@ def generate_key():
 class BifrostFile(models.Model):
     access_token = models.CharField(default=generate_key, max_length=40)
     file = PrivateFileField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
         return self.file.name
