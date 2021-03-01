@@ -106,15 +106,15 @@ def register_schema(app_label: str):
 
     try:
         schema = importlib.import_module("%s.schema" % app_name)
-    except:
-        return None
 
-    if hasattr(schema, "Query"):
-        register_graphql_schema(Query=schema.Query)
-    if hasattr(schema, "Mutation"):
-        register_graphql_schema(Mutation=schema.Mutation)
-    if hasattr(schema, "Subscription"):
-        register_graphql_schema(Subscription=schema.Subscription)
+        if hasattr(schema, "Query"):
+            register_graphql_schema(Query=schema.Query)
+        if hasattr(schema, "Mutation"):
+            register_graphql_schema(Mutation=schema.Mutation)
+        if hasattr(schema, "Subscription"):
+            register_graphql_schema(Subscription=schema.Subscription)
+    except:
+        pass
 
 
 def register_model(cls: type, type_prefix: str):
