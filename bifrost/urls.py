@@ -1,8 +1,8 @@
 from django.conf.urls import url
-from django.urls import path
+from django.urls import re_path
 from django.views.decorators.csrf import csrf_exempt
-from graphene_subscriptions.consumers import GraphqlSubscriptionConsumer
 
+from .consumer import GraphqlWsConsumer
 from .views import BifrostFileView, BifrostView
 
 # Traditional URL routing
@@ -15,7 +15,7 @@ urlpatterns = [
     ),
 ]
 
-websocket_urlpatterns = [path("graphql", GraphqlSubscriptionConsumer)]
+websocket_urlpatterns = [re_path(r"^graphql/?$", GraphqlWsConsumer.as_asgi())]
 
 # if SHOULD_EXPOSE_GRAPHIQL:
 #     urlpatterns.append(url(r"^graphiql", graphiql))
