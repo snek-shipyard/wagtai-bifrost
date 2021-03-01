@@ -102,7 +102,7 @@ def create_schema():
         mutation=Mutation,
         subscription=Subscription,
         types=list(registry.models.values()),
-        auto_camelcase=getattr(settings, "BIFROST_AUTO_CAMELCASE", True),
+        auto_camelcase=BIFROST_AUTO_CAMELCASE,
     )
 
 
