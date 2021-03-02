@@ -70,6 +70,7 @@ class OnNewDropperHeimdallGeneration(channels_graphql_ws.Subscription):
         """That is how subscription arguments are defined."""
 
     @staticmethod
+    @superuser_required
     def subscribe(root, info):
         """Called when user subscribes."""
 
