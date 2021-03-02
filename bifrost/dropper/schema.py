@@ -1,78 +1,17 @@
 import json
-from os.path import basename
-from tempfile import TemporaryFile
-from urllib.parse import urlsplit
 
+import channels_graphql_ws
 import graphene
-import requests
-from django.core.files import File
 from graphql import GraphQLError
 from graphql_jwt.decorators import superuser_required
 from python_graphql_client import GraphqlClient
-from wagtail.core.models import Site
 
-from ..models import BifrostFile, DropperSettings
-from .types import GenerationStatus
-
-
-def get_dropper_connection():
-
-    settings = DropperSettings.for_site(Site.objects.get(is_default_site=True))
-
-    license_key = settings.license
-    endpoint = settings.get_dropper_endpoint_display()
-
-    client = GraphqlClient(endpoint=endpoint)
-
-    return client, endpoint, license_key
+from ..settings import BIFROST_DROPPER_ENDPOINT, BIFROST_DROPPER_HEIMDALL_LICENSE
+from .connection import authenticate
+from .types import GenerationTypes
 
 
-def bifrost_authenticate():
-    client, endpoint, license_key = get_dropper_connection()
-
-    authData = client.execute(
-        query="""
-            mutation tokenAuth($username: String!, $password: String!) {
-                tokenAuth(username: $username, password: $password) {
-                    token
-                    refreshToken
-                    user {
-                        username
-                    }
-                }
-            }     
-        """,
-        variables={"username": "cisco", "password": "ciscocisco"},
-    )
-
-    bifrost_auth_token = authData["data"]["tokenAuth"]["token"]
-
-    return bifrost_auth_token
-
-
-def download_to_file_field(url, field):
-    with TemporaryFile() as tf:
-        r = requests.get(url, stream=True)
-        for chunk in r.iter_content(chunk_size=4096):
-            tf.write(chunk)
-
-        tf.seek(0)
-        field.save(basename(urlsplit(url).path), File(tf))
-
-
-def download_file(url):
-    r = requests.get(url, allow_redirects=True)
-
-    with open("bridge-drop.tgz", "wb") as file:
-        file.write(r.content)
-
-        private_file = BifrostFile.objects.get_or_create(file__name=file.name)
-
-        private_file.file.save(file.name, File(file))
-        return private_file
-
-
-class RequestDropperBridgeDrop(graphene.Mutation):
+class DropperHeimdallGeneration(graphene.Mutation):
     taskId = graphene.String()
 
     class Arguments:
@@ -83,25 +22,25 @@ class RequestDropperBridgeDrop(graphene.Mutation):
         try:
             import bifrost.schema
 
-            bifrost_auth_token = bifrost_authenticate()
-            client, endpoint, license_key = get_dropper_connection()
+            bifrost_auth_token = authenticate()
+            client = GraphqlClient(endpoint=BIFROST_DROPPER_ENDPOINT)
 
             introspection_dict = bifrost.schema.schema.introspect()
             introspection_data = json.dumps(introspection_dict)
 
-            document = """
-                mutation requestBridgeDrop($introspectionData: JSONString!, $licenseKey: String!) {
-                    requestBridgeDrop(introspectionData: $introspectionData, licenseKey: $licenseKey) {
+            query = """
+                mutation heimdallGeneration($introspectionData: JSONString!, $licenseKey: String!) {
+                    heimdallGeneration(introspectionData: $introspectionData, licenseKey: $licenseKey) {
                         taskId
                     }
                 }
             """
 
             request_bridge_drop_data = client.execute(
-                query=document,
+                query=query,
                 variables={
                     "introspectionData": introspection_data,
-                    "licenseKey": license_key,
+                    "licenseKey": BIFROST_DROPPER_HEIMDALL_LICENSE,
                 },
                 headers={"Authorization": f"JWT {bifrost_auth_token}"},
             )
@@ -111,54 +50,62 @@ class RequestDropperBridgeDrop(graphene.Mutation):
 
             taskId = request_bridge_drop_data["data"]["requestBridgeDrop"]["taskId"]
 
-            return RequestDropperBridgeDrop(taskId=taskId)
+            return DropperHeimdallGeneration(taskId=taskId)
         except Exception as ex:
             raise GraphQLError(ex)
 
 
 class Mutation(graphene.ObjectType):
-    request_dropper_bridge_drop = RequestDropperBridgeDrop.Field()
+    dropper_heimdall_generation = DropperHeimdallGeneration.Field()
 
 
-class Query(graphene.ObjectType):
-    get_dropper_bridge_drop = graphene.Field(
-        GenerationStatus, task_id=graphene.ID(required=True)
-    )
+class OnNewDropperHeimdallGeneration(channels_graphql_ws.Subscription):
+    """Simple GraphQL subscription."""
 
-    @superuser_required
-    def resolve_get_dropper_bridge_drop(root, info, task_id):
-        try:
-            bifrost_auth_token = bifrost_authenticate()
-            client, endpoint, license_key = get_dropper_connection()
+    # Subscription payload.
+    state = GenerationTypes.DropperState(required=True)
+    url = graphene.String()
 
-            request_bridge_drop_data = client.execute(
-                query="""
-                    query getBridgeDrop($taskId: ID!) {
-                        getBridgeDrop(taskId:$taskId){
-                            status
-                            url
-                        }
-                    }
-                """,
-                variables={"taskId": task_id},
-                headers={"Authorization": f"JWT {bifrost_auth_token}"},
-            )
+    class Arguments:
+        """That is how subscription arguments are defined."""
 
-            if "errors" in request_bridge_drop_data:
-                raise GraphQLError(request_bridge_drop_data["errors"])
+    @staticmethod
+    def subscribe(root, info):
+        """Called when user subscribes."""
 
-            generation_status = request_bridge_drop_data["data"]["getBridgeDrop"]
-            file_url = generation_status["url"]
+        # Return the list of subscription group names.
+        return ["heimdall_generation"]
 
-            if file_url:
-                private_file = BifrostFile()
-                download_to_file_field(file_url, private_file.file)
-                file_url = private_file.get_download_url()
+    @staticmethod
+    def publish(payload, info):
+        """Called to notify the client."""
 
-            return {
-                "status": GenerationStatus.Status.get(generation_status["status"]),
-                "url": file_url,
-            }
+        # Here `payload` contains the `payload` from the `broadcast()`
+        # invocation (see below). You can return `MySubscription.SKIP`
+        # if you wish to suppress the notification to a particular
+        # client. For example, this allows to avoid notifications for
+        # the actions made by this particular client.
 
-        except:
-            raise GraphQLError("Something went wrong. Please try again later!")
+        state = payload["state"]
+        url = payload["url"]
+
+        return OnNewDropperHeimdallGeneration(
+            state=GenerationTypes.DropperState.get(state), url=url
+        )
+
+    @classmethod
+    def new_dropper_heimdall_generation(cls, state, url):
+        """Auxiliary function to send subscription notifications.
+        It is generally a good idea to encapsulate broadcast invocation
+        inside auxiliary class methods inside the subscription class.
+        That allows to consider a structure of the `payload` as an
+        implementation details.
+        """
+
+        cls.broadcast(group="heimdall_generation", payload={"state": state, "url": url})
+
+
+class Subscription(graphene.ObjectType):
+    """Root GraphQL subscription."""
+
+    on_new_dropper_heimdall_generation = OnNewDropperHeimdallGeneration.Field()

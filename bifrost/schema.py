@@ -56,7 +56,10 @@ QUERIES = [
 
 MUTATIONS = [{"cls": bifrost.dropper.schema.Mutation, "active": BIFROST_API_DROPPER}]
 
-SUBSCRIPTIONS = []
+SUBSCRIPTIONS = [
+    {"cls": bifrost.dropper.schema.Subscription, "active": BIFROST_API_DROPPER}
+]
+
 
 registry.queries += [o["cls"] for o in QUERIES if o["active"]]
 registry.mutations += [o["cls"] for o in MUTATIONS if o["active"]]
