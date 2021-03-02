@@ -5,6 +5,8 @@ import graphql_jwt
 from django.utils.text import camel_case_to_spaces
 from graphql.validation.rules import NoUnusedFragments, specified_rules
 
+from .consumer import GraphqlWsConsumer
+
 # HACK: Remove NoUnusedFragments validator
 # Due to the way previews work on the frontend, we need to pass all
 # fragments into the query even if they're not used.
@@ -106,3 +108,7 @@ def create_schema():
 
 
 schema = create_schema()
+
+# Set the GraphqlWsConsumer schema.
+# Settings the schema in consumer.py results in loading the schema twice.
+GraphqlWsConsumer.schema = schema
