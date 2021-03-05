@@ -95,15 +95,14 @@ class OnNewDropperHeimdallGeneration(channels_graphql_ws.Subscription):
         )
 
     @classmethod
-    def new_dropper_heimdall_generation(cls, state, url):
+    async def new_dropper_heimdall_generation(cls, state, url):
         """Auxiliary function to send subscription notifications.
         It is generally a good idea to encapsulate broadcast invocation
         inside auxiliary class methods inside the subscription class.
         That allows to consider a structure of the `payload` as an
         implementation details.
         """
-
-        cls.broadcast(group="heimdall_generation", payload={"state": state, "url": url})
+        await cls.broadcast(group="heimdall_generation", payload={"state": state, "url": url})
 
 
 class Subscription(graphene.ObjectType):

@@ -60,7 +60,6 @@ def download_file(url):
 
 def authenticate():
     client = GraphqlClient(endpoint=BIFROST_DROPPER_ENDPOINT)
-
     query = """
 				mutation tokenAuth($username: String!, $password: String!) {
 						tokenAuth(username: $username, password: $password) {
@@ -100,7 +99,7 @@ async def connect():
 
         variables = {"licenseKey": BIFROST_DROPPER_HEIMDALL_LICENSE}
 
-        def subscriptionHandle(data):
+        async def subscription_handle(data):
             from .schema import OnNewDropperHeimdallGeneration
 
             if "errors" in data:
@@ -117,11 +116,16 @@ async def connect():
 
             # Processed `f5f27e3b-e5a2-41d8-9447-b3d3d214d278`(SUCCESS) -> http://localhost:8000/...
             logger.info(f"Processed `{task_id}`({state})` -> {url}")
+            await OnNewDropperHeimdallGeneration.new_dropper_heimdall_generation(
+                state, url
+            )
 
-            OnNewDropperHeimdallGeneration.new_dropper_heimdall_generation(state, url)
+        def subscription_callback(data):
+            loop = asyncio.get_event_loop()
+            loop.create_task(subscription_handle(data))
 
         await client.subscribe(
-            query=query, variables=variables, handle=subscriptionHandle
+            query=query, variables=variables, handle=subscription_callback
         )
 
     except Exception as ex:

@@ -4,13 +4,20 @@ import threading
 from ..settings import BIFROST_API_DROPPER
 
 
-def start_connection_thread():
+def between_callback():
     from .connection import connect
-    asyncio.get_event_loop()
 
-    t = threading.Thread(target=lambda: asyncio.run(connect()))
-    t.setDaemon(True)
-    t.start()
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+
+    loop.run_until_complete(connect())
+    loop.close()
+
+
+def start_connection_thread():
+    _thread = threading.Thread(target=between_callback)
+    _thread.setDaemon(True)
+    _thread.start()
 
 
 connect = lambda: start_connection_thread() if BIFROST_API_DROPPER else None
