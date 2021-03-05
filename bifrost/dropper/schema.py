@@ -37,7 +37,7 @@ class DropperHeimdallGeneration(graphene.Mutation):
                 }
             """
 
-            request_bridge_drop_data = client.execute(
+            heimdall_generation_data = client.execute(
                 query=query,
                 variables={
                     "introspectionData": introspection_data,
@@ -46,10 +46,10 @@ class DropperHeimdallGeneration(graphene.Mutation):
                 headers={"Authorization": f"JWT {bifrost_auth_token}"},
             )
 
-            if "errors" in request_bridge_drop_data:
-                raise GraphQLError(request_bridge_drop_data["errors"][0]["message"])
+            if "errors" in heimdall_generation_data:
+                raise GraphQLError(heimdall_generation_data["errors"][0]["message"])
 
-            taskId = request_bridge_drop_data["data"]["requestBridgeDrop"]["taskId"]
+            taskId = heimdall_generation_data["data"]["heimdallGeneration"]["taskId"]
 
             return DropperHeimdallGeneration(taskId=taskId)
         except Exception as ex:
@@ -103,7 +103,9 @@ class OnNewDropperHeimdallGeneration(channels_graphql_ws.Subscription):
         That allows to consider a structure of the `payload` as an
         implementation details.
         """
-        await cls.broadcast(group="heimdall_generation", payload={"state": state, "url": url})
+        await cls.broadcast(
+            group="heimdall_generation", payload={"state": state, "url": url}
+        )
 
 
 class Subscription(graphene.ObjectType):
