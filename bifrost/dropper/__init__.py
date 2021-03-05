@@ -2,13 +2,13 @@ import asyncio
 import threading
 
 from ..settings import BIFROST_API_DROPPER
-from .connection import connect as _connect
 
 
 def start_connection_thread():
+    from .connection import connect
     asyncio.get_event_loop()
 
-    t = threading.Thread(target=lambda: asyncio.run(_connect()))
+    t = threading.Thread(target=lambda: asyncio.run(connect()))
     t.setDaemon(True)
     t.start()
 
