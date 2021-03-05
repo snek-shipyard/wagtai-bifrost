@@ -5,6 +5,8 @@ django-graphql-jwt==0.3.1
 PyJWT==1.7.1
 graphene-file-upload==1.2.2
 django-channels-graphql-ws~=0.8.0
+channels~=3.0.3
+channels-redis~=3.2.0
 wagtailmedia
 graphql-core==2.2.1
 factory-boy==2.12.0
