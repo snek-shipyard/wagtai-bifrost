@@ -7,7 +7,6 @@ from graphql_jwt.decorators import superuser_required
 from python_graphql_client import GraphqlClient
 
 from ..settings import BIFROST_DROPPER_ENDPOINT, BIFROST_DROPPER_HEIMDALL_LICENSE
-from .connection import authenticate
 from .types import GenerationTypes
 
 
@@ -21,6 +20,8 @@ class DropperHeimdallGeneration(graphene.Mutation):
     def mutate(self, info, **kwargs):
         try:
             import bifrost.schema
+
+            from .connection import authenticate
 
             bifrost_auth_token = authenticate()
             client = GraphqlClient(endpoint=BIFROST_DROPPER_ENDPOINT)
