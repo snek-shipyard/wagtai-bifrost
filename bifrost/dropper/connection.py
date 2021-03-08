@@ -5,6 +5,7 @@ from tempfile import TemporaryFile
 from urllib.parse import urlsplit
 
 import requests
+from asgiref.sync import sync_to_async
 from django.core.files import File
 from python_graphql_client import GraphqlClient
 
@@ -36,6 +37,7 @@ if not BIFROST_DROPPER_HEIMDALL_LICENSE:
     )
 
 
+@sync_to_async
 def download_to_file_field(url, field):
     with TemporaryFile() as tf:
         r = requests.get(url, stream=True)
@@ -111,7 +113,7 @@ async def connect():
 
             if url:
                 private_file = BifrostFile()
-                download_to_file_field(url, private_file.file)
+                await download_to_file_field(url, private_file.file)
                 url = private_file.get_download_url()
 
             # Processed `f5f27e3b-e5a2-41d8-9447-b3d3d214d278`(SUCCESS) -> http://localhost:8000/...
