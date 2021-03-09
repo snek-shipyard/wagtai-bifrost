@@ -16,11 +16,16 @@ class BifrostFile(models.Model):
     file = PrivateFileField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    
+    @property
+    def url(self) -> str:
+        return settings.BASE_URL + self.file.url
 
-    def __str__(self) -> str:
-        return self.file.name
-
-    def get_download_url(self) -> str:
+    @property
+    def secure_url(self) -> str:
         return (settings.BASE_URL + self.file.url).replace(
             "://", f"://{self.access_token}@"
         )
+
+    def __str__(self) -> str:
+        return self.file.name

@@ -38,7 +38,7 @@ if not BIFROST_DROPPER_HEIMDALL_LICENSE:
 
 
 @sync_to_async
-def download_to_file_field(url, field):
+def download_to_file_field(url, field, access_token=None):
     with TemporaryFile() as tf:
         r = requests.get(url, stream=True)
         for chunk in r.iter_content(chunk_size=4096):
@@ -93,7 +93,9 @@ async def connect():
                 subscription onNewHeimdallGeneration($licenseKey: ID!) {
                     onNewHeimdallGeneration(licenseKey: $licenseKey) {
                         state
+                        accessToken
                         url
+                        secureUrl
                         taskId
                     }
                 }
@@ -109,12 +111,13 @@ async def connect():
 
             state = data["data"]["onNewHeimdallGeneration"]["state"]
             url = data["data"]["onNewHeimdallGeneration"]["url"]
+            access_token = data["data"]["onNewHeimdallGeneration"]["accessToken"]
             task_id = data["data"]["onNewHeimdallGeneration"]["taskId"]
 
             if url:
                 private_file = BifrostFile()
-                await download_to_file_field(url, private_file.file)
-                url = private_file.get_download_url()
+                await download_to_file_field(url, private_file.file, access_token=access_token)
+                url = private_file.secure_url
 
             # Processed `f5f27e3b-e5a2-41d8-9447-b3d3d214d278`(SUCCESS) -> http://localhost:8000/...
             logger.info(f"Processed `{task_id}`({state})` -> {url}")
