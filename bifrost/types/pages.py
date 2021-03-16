@@ -173,7 +173,7 @@ def PagesQuery():
         )
         page = graphene.Field(
             PageInterface,
-            id=graphene.Int(),
+            id=graphene.ID(),
             slug=graphene.String(),
             token=graphene.String(),
             content_type=graphene.String(),
@@ -218,7 +218,7 @@ def PagesSubscription():
     class Mixin:
         page = graphene.Field(
             PageInterface,
-            id=graphene.Int(),
+            id=graphene.ID(),
             slug=graphene.String(),
             token=graphene.String(),
             content_type=graphene.String(),
