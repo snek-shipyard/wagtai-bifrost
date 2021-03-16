@@ -40,7 +40,7 @@ if not BIFROST_DROPPER_HEIMDALL_LICENSE:
 @sync_to_async
 def download_to_file_field(url, field, access_token=None):
     with TemporaryFile() as tf:
-        r = requests.get(url, stream=True)
+        r = requests.get(url, stream=True, auth=(access_token, ""))
         for chunk in r.iter_content(chunk_size=4096):
             tf.write(chunk)
 
